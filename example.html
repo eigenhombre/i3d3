@@ -16,6 +16,9 @@ var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
     h = 200,
     w = 500;
 
+var xscale = d3.scale.linear().domain([0, dataset.length]).range([0, w]);
+var yscale = d3.scale.linear().domain([0, 30]).range([h, 0]);
+
 var svg = d3.select("#plots")
    .append("svg")
    .attr("width", w)
@@ -25,12 +28,11 @@ svg.selectAll("rect")
    .data(dataset)
    .enter()
    .append("rect")
-   .attr("x", function(d, i) { return i * (w / dataset.length); })
-   .attr("y", function(d) { return h - d; })
+   .attr("x", function(d, i) { return xscale(i) ; })
+   .attr("y", function(d) { return yscale(d); })
    .attr("fill", "grey")
    .attr("width", w / dataset.length - 1)
    .attr("height", function(d) { return d * 10; });
-   
 
 </script>
 </body> </html>
