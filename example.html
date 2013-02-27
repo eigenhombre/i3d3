@@ -7,17 +7,15 @@
 <body>
 
 <style>
-.plot {
-    margin-bottom: 2em;
-}
 .axis path, .axis line {
     fill: none;
-    stroke: black;
+    stroke: grey;
     shape-rendering: black;
 }
 .axis text {
     font-family: sans-serif;
     font-size: 11px;
+    fill: grey;
 }
 
 </style>
@@ -31,11 +29,11 @@
 
 <script>
 
-var h = 100,
+var h = 150,
     w = 300;
 
 function testdata() {
-    return d3.range(80).map(d3.random.logNormal(Math.log(300)));
+    return d3.range(80).map(d3.random.logNormal(Math.log(30)));
 }
 
 go(testdata(), h, w, "plot1");
@@ -43,8 +41,10 @@ go(testdata(), h, w, "plot2");
 go(testdata(), h, w, "plot3");
 
 function go(dataset, h, w, target_div) {
-    var padding = 20;
-    var xscale = d3.scale.linear().domain([0, dataset.length]).range([0, w]);
+    var padding = 30;
+    var xscale = d3.scale.linear()
+        .domain([0, dataset.length])
+        .range([padding, w - padding]);
     var yscale = d3.scale.linear()
         .domain([0, d3.max(dataset)])
         .range([h - padding, padding]);
@@ -62,12 +62,17 @@ function go(dataset, h, w, target_div) {
        .attr("width", w / dataset.length - 0.1)
        .attr("height", function(d) { return h - (padding + yscale(d)); });
 
-    var padding = 1;
     var xAxis = d3.svg.axis().scale(xscale).orient("bottom");
     svg.append("g")
         .attr("class", "axis")
-        .attr("transform", "translate(0," + (-20 + h - padding) + ")")
+        .attr("transform", "translate(0," + (h - padding) + ")")
         .call(xAxis);
+
+    var yAxis = d3.svg.axis().scale(yscale).orient("left").ticks(5);
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(" + padding + ",0)")
+        .call(yAxis);
 }
 </script>
 </body>
