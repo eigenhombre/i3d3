@@ -5,34 +5,70 @@
 </head>
 
 <body>
-<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
 
-<div id="plots"></div>
+<style>
+.plot {
+    margin-bottom: 2em;
+}
+.axis path, .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: black;
+}
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+</style>
+
+<script type="text/javascript"
+        src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
+
+<div class="plot" id="plot1"></div>
+<div class="plot" id="plot2"></div>
+<div class="plot" id="plot3"></div>
 
 <script>
 
-var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
-11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ],
-    h = 200,
-    w = 500;
+var h = 100,
+    w = 300;
 
-var xscale = d3.scale.linear().domain([0, dataset.length]).range([0, w]);
-var yscale = d3.scale.linear().domain([0, 30]).range([h, 0]);
+function testdata() {
+    return d3.range(80).map(d3.random.logNormal(Math.log(300)));
+}
 
-var svg = d3.select("#plots")
-   .append("svg")
-   .attr("width", w)
-   .attr("height", h);
+go(testdata(), h, w, "plot1");
+go(testdata(), h, w, "plot2");
+go(testdata(), h, w, "plot3");
 
-svg.selectAll("rect")
-   .data(dataset)
-   .enter()
-   .append("rect")
-   .attr("x", function(d, i) { return xscale(i) ; })
-   .attr("y", function(d) { return yscale(d); })
-   .attr("fill", "grey")
-   .attr("width", w / dataset.length - 0.1)
-   .attr("height", function(d) { return d * 10; });
+function go(dataset, h, w, target_div) {
+    var padding = 20;
+    var xscale = d3.scale.linear().domain([0, dataset.length]).range([0, w]);
+    var yscale = d3.scale.linear()
+        .domain([0, d3.max(dataset)])
+        .range([h - padding, padding]);
+    var svg = d3.select("#" + target_div).append("svg")
+       .attr("width", w)
+       .attr("height", h);
 
+    svg.selectAll("rect")
+       .data(dataset)
+       .enter()
+       .append("rect")
+       .attr("x", function(d, i) { return xscale(i) ; })
+       .attr("y", function(d) { return yscale(d); })
+       .attr("fill", "grey")
+       .attr("width", w / dataset.length - 0.1)
+       .attr("height", function(d) { return h - (padding + yscale(d)); });
+
+    var padding = 1;
+    var xAxis = d3.svg.axis().scale(xscale).orient("bottom");
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + (-20 + h - padding) + ")")
+        .call(xAxis);
+}
 </script>
-</body> </html>
+</body>
+</html>
