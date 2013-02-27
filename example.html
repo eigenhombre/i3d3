@@ -31,7 +31,7 @@ svg.selectAll("rect")
    .attr("x", function(d, i) { return xscale(i) ; })
    .attr("y", function(d) { return yscale(d); })
    .attr("fill", "grey")
-   .attr("width", w / dataset.length - 1)
+   .attr("width", w / dataset.length - 0.1)
    .attr("height", function(d) { return d * 10; });
 
 </script>
