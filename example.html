@@ -36,11 +36,11 @@ function testdata() {
     return d3.range(80).map(d3.random.logNormal(Math.log(30)));
 }
 
-go(testdata(), h, w, "plot1");
-go(testdata(), h, w, "plot2");
-go(testdata(), h, w, "plot3");
+bars(testdata(), h, w, "plot1");
+bars(testdata(), h, w, "plot2");
+bars(testdata(), h, w, "plot3");
 
-function go(dataset, h, w, target_div) {
+function bars(dataset, h, w, target_div) {
     var padding = 30;
     var xscale = d3.scale.linear()
         .domain([0, dataset.length])
