@@ -1,0 +1,16 @@
+.axis path, .axis line {
+    fill: none;
+    stroke: grey;
+    shape-rendering: black;
+}
+.axis text, .xlabel {
+    font-family: sans-serif;
+    fill: grey;
+}
+.axis text {
+    font-size: 11px;
+}
+.xlabel {
+    font-size: 13px;
+}
+
