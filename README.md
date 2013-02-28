@@ -20,17 +20,17 @@ our requirements, which are:
 
 - Minimal visual noise
 - Make histograms / bar charts based on provided array of bins
-    - Show axes
+    - Display X and Y axes
     - Single or multiple plots per page, of various sizes
     - Show X axis label
 
 #### Not done
 
-- Set X axis range (min/max) on histograms
+- Add plot titles
+- Draw lines on top of plot
 - Support line plots, scatter plots
 - Show gaps in data
 - Error bars
-- Draw lines on top of plot
 - Add rectangular regions on top of plot
 - Add text to plot
 - Zooming - in JavaScript with available points
