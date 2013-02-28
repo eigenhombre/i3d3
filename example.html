@@ -12,10 +12,15 @@
     stroke: grey;
     shape-rendering: black;
 }
-.axis text {
+.axis text, .xlabel {
     font-family: sans-serif;
-    font-size: 11px;
     fill: grey;
+}
+.axis text {
+    font-size: 11px;
+}
+.xlabel {
+    font-size: 13px;
 }
 
 </style>
@@ -29,19 +34,19 @@
 
 <script>
 
-var h = 150,
-    w = 300;
+var h = 180,
+    w = 330;
 
 function testdata() {
-    return d3.range(80).map(d3.random.logNormal(Math.log(30)));
+    return d3.range(30).map(d3.random.logNormal(Math.log(30)));
 }
 
-bars(testdata(), h, w, "plot1");
-bars(testdata(), h, w, "plot2");
-bars(testdata(), h, w, "plot3");
+bars(testdata(), "SMT-8", h, w, "plot1");
+bars(testdata(), "Slow Monopole", h, w, "plot2");
+bars(testdata(), "Galactic Center", h, w, "plot3");
 
-function bars(dataset, h, w, target_div) {
-    var padding = 30;
+function bars(dataset, xlabel, h, w, target_div) {
+    var padding = 40;
     var xscale = d3.scale.linear()
         .domain([0, dataset.length])
         .range([padding, w - padding]);
@@ -73,6 +78,13 @@ function bars(dataset, h, w, target_div) {
         .attr("class", "axis")
         .attr("transform", "translate(" + padding + ",0)")
         .call(yAxis);
+
+    svg.append("text")
+        .attr("class", "xlabel")
+        .attr("text-anchor", "end")
+        .attr("x", w - padding + 5)
+        .attr("y", h - 5)
+        .text(xlabel);
 }
 </script>
 </body>
