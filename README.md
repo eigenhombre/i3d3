@@ -39,6 +39,10 @@ quite what we wanted; D3.js does not provide these directly but is
 sufficiently powerful, flexible and fast to provide a foundation to
 allow us to implement these ourselves.
 
+#### Sample Output
+
+![Example output](example.png "Example output")
+
 #### References
 
 http://stackoverflow.com/questions/6766547/javascript-graphing-library
