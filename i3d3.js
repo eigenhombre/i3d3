@@ -1,7 +1,11 @@
-function bars(dataset, datarange, xlabel, h, w, target_div) {
-    var padding = 40,
-        xmin = datarange[0],
-        xmax = datarange[1],
+function bars(opt) {
+    var xAxis, yAxis,
+        padding = 50,
+        dataset = opt.data[0],
+        xmin = opt.range[0],
+        xmax = opt.range[1],
+        w = opt.size[0],
+        h = opt.size[1],
         binscale = d3.scale.linear()
           .domain([0, dataset.length])
           .range([padding, w - padding]),
@@ -11,7 +15,7 @@ function bars(dataset, datarange, xlabel, h, w, target_div) {
         yscale = d3.scale.linear()
           .domain([0, d3.max(dataset)])
           .range([h - padding, padding]),
-        svg = d3.select("#" + target_div).append("svg")
+        svg = d3.select("#" + opt.div).append("svg")
           .attr("width", w)
           .attr("height", h);
 
@@ -25,22 +29,33 @@ function bars(dataset, datarange, xlabel, h, w, target_div) {
        .attr("width", w / dataset.length - 0.1)
        .attr("height", function(d) { return h - (padding + yscale(d)); });
 
-    var xAxis = d3.svg.axis().scale(xscale).orient("bottom").ticks(5);
+    xAxis = d3.svg.axis().scale(xscale).orient("bottom").ticks(5);
     svg.append("g")
         .attr("class", "axis")
         .attr("transform", "translate(0," + (h - padding) + ")")
         .call(xAxis);
 
-    var yAxis = d3.svg.axis().scale(yscale).orient("left").ticks(3);
+    yAxis = d3.svg.axis().scale(yscale).orient("left").ticks(3);
     svg.append("g")
         .attr("class", "axis")
         .attr("transform", "translate(" + padding + ",0)")
         .call(yAxis);
 
     svg.append("text")
-        .attr("class", "xlabel")
+        .attr("class", "label")
         .attr("text-anchor", "end")
         .attr("x", w - padding + 5)
-        .attr("y", h - 5)
-        .text(xlabel);
+        .attr("y", h - 10)
+        .text(opt.xlabel);
+
+    var yy = 50;
+    var xx = 10;
+    svg.append("text")
+        .attr("class", "label")
+        .attr("text-anchor", "end")
+        .attr("x", xx)
+        .attr("y", yy)
+        .text(opt.ylabel)
+        .attr('transform',
+              function(d,i,j) { return 'rotate(-90 ' + xx + ', ' + yy + ')' });
 }

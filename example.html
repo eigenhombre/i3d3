@@ -14,16 +14,40 @@
 
 <script>
 
-var h = 180,
+var h = 200,
     w = 330;
 
 function testdata() {
-    return d3.range(30).map(d3.random.logNormal(Math.log(30)));
+    return d3.range(60).map(d3.random.logNormal(Math.log(30)));
 }
 
-bars(testdata(), [0, 100], "SMT-8", h, w, "plot1");
-bars(testdata(), [2000, 4000], "Slow Monopole", h, w, "plot2");
-bars(testdata(), [-1, 1], "Galactic Center", h, w, "plot3");
+bars({data: [testdata()],
+      div: "plot1",
+      xlabel: "SMT-8",
+      ylabel: "N",
+      range: [0, 100],
+      size: [w, h],
+      h: h,
+      w: w});
+
+bars({data: [testdata()],
+      div: "plot2",
+      xlabel: "Slow Monopole",
+      ylabel: "Counts",
+      range: [2000, 4000],
+      size: [w, h],
+      h: h,
+      w: w});
+
+bars({data: [testdata()],
+      div: "plot3",
+      xlabel: "sin(l)",
+      ylabel: "Neutrinos",
+      range: [-1, 1],
+      size: [w, h],
+      h: h,
+      w: w});
+
 </script>
 </body>
 </html>

@@ -3,14 +3,14 @@
     stroke: grey;
     shape-rendering: black;
 }
-.axis text, .xlabel {
+.axis text, .label {
     font-family: sans-serif;
     fill: grey;
 }
 .axis text {
     font-size: 11px;
 }
-.xlabel {
+.label {
     font-size: 13px;
 }
 

@@ -21,8 +21,8 @@ our requirements, which are:
 - Minimal visual noise
 - Make histograms / bar charts based on provided array of bins
     - Display X and Y axes
+    - Show X and Y axis labels
     - Single or multiple plots per page, of various sizes
-    - Show X axis label
 
 #### Not done
 
