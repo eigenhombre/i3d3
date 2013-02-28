@@ -11,14 +11,14 @@ our requirements, which are:
 
 #### DONE
 
-- Show histograms
+- Make histograms / bar charts based on provided array of bins
     - Show axes
     - Single or multiple plots per page, of various sizes
     - Show X axis label
 
 #### Not done
 
-- Set X axis range on histograms
+- Set X axis range (min/max) on histograms
 - Support line plots, scatter plots
 - Show gaps in data
 - Error bars
