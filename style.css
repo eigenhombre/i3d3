@@ -3,7 +3,7 @@
     stroke: lightgrey;
     shape-rendering: black;
 }
-.axis text, .label {
+.axis text, .label, .note {
     font-family: sans-serif;
     fill: grey;
 }
@@ -13,4 +13,6 @@
 .label {
     font-size: 13px;
 }
-
+.note {
+    font-size: 12px;
+}

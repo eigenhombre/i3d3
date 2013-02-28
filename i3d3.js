@@ -1,4 +1,9 @@
+function select(vec, key) { 
+    return vec.filter(function(x) { return x[key] !== undefined; }); 
+}
+
 function bars(opt) {
+    // Initial setup
     var xAxis, yAxis,
         padding = 50,
         dataset = opt.data[0],
@@ -19,6 +24,7 @@ function bars(opt) {
           .attr("width", w)
           .attr("height", h);
 
+    // Set up axes
     xAxis = d3.svg.axis().scale(xscale).orient("bottom").ticks(5);
     svg.append("g")
         .attr("class", "axis")
@@ -26,6 +32,8 @@ function bars(opt) {
         .call(xAxis);
 
     yAxis = d3.svg.axis().scale(yscale).orient("left").ticks(3);
+
+    // Set up axis labels
     svg.append("g")
         .attr("class", "axis")
         .attr("transform", "translate(" + padding + ",0)")
@@ -49,17 +57,20 @@ function bars(opt) {
         .attr('transform',
               function(d,i,j) { return 'rotate(-90 ' + xx + ', ' + yy + ')' });
 
+    // Set up extra elements for plots
     if(! opt.extras) {
         opt.extras = [];
     }
-    function select(vec, key) { 
-        return vec.filter(function(x) { return x[key] !== undefined; }); 
-    }
+
     var vbars = select(opt.extras, "vbar");
     var hbars = select(opt.extras, "hbar");
     var regions = select(opt.extras, "region");
+    var notes = select(opt.extras, "note");
 
-    // Content of plots, in order of z-height:
+    // Content of plots, in order of z-height. See
+    // http://stackoverflow.com/questions/13595175/updating-svg-element-z-index-with-d3
+
+    // Rectangular, colored regions of interest
     regions.map(function(v) {
                   svg.append("svg:rect")
                         .attr("x", xscale(v.region.min))
@@ -69,6 +80,7 @@ function bars(opt) {
                         .attr("fill", v.region.color);
     });
 
+    // Actual bins
     svg.selectAll("rect")
        .data(dataset)
        .enter()
@@ -78,6 +90,8 @@ function bars(opt) {
        .attr("fill", "grey")
        .attr("width", w / dataset.length - 0.1)
        .attr("height", function(d) { return h - (padding + yscale(d)); });
+
+    // Horizontal and vertical lines
     vbars.map(function(v) {
                   svg.append("svg:line")
                       .attr("x1", xscale(v.vbar.pos))
@@ -94,6 +108,22 @@ function bars(opt) {
                       .attr("y2", yscale(v.hbar.pos))
                       .style("stroke", v.hbar.color);
     });
-
+    notes.map(function(v) {
+                  var X, Y;
+                  if(v.note.units === "pixels") {
+                      X = v.note.x;
+                      Y = v.note.y;
+                  } else {
+                      X = xscale(v.note.x);
+                      Y = yscale(v.note.y);
+                  }
+                  console.log(X, Y);
+                  svg.append("text")
+                      .attr("class", "note")
+                      .attr("x", X)
+                      .attr("y", Y)
+                      .attr("stroke", v.note.color)
+                      .text(v.note.text);
+    });
 
 }

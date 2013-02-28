@@ -21,13 +21,16 @@ function testdata() {
     return d3.range(60).map(d3.random.logNormal(Math.log(30)));
 }
 
-bars({data: [testdata()],
+var data = testdata();
+bars({data: [data],
       div: "plot1",
       size: [w, h],
       xlabel: "SMT-8",
       ylabel: "N",
       range: [0, 100],
-      extras: [{region: {min: 60, max: 80, color: "lavender"}}],
+      extras: [{region: {min: 60, max: 80, color: "lavender"}},
+               {note: {x: 8, y: d3.max(data) * 0.8, text: "Preliminary",
+                       color: "rosybrown"}}],
 });
 
 bars({data: [testdata()],
@@ -47,7 +50,10 @@ bars({data: [testdata()],
       ylabel: "Neutrinos",
       range: [-1, 1],
       extras: [{hbar: {pos: 100, color: "orange"}},
-               {region: {min: -1, max: -0.5, color: "linen"}}],
+               {vbar: {pos: -0.5, color: "lightgrey"}},
+               {region: {min: -1, max: -0.5, color: "linen"}},
+               {note: {x: 0.7 * w, y: 0.4 * h, text: "Nu_e", 
+                       color: "palevioletred", units: "pixels"}}],
 });
 
 </script>

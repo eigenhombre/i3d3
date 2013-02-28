@@ -1,8 +1,9 @@
 i3d3
 ====
 
-[D3](http://d3js.org/)-based histogramming and plotting library, for
-use in [IceCube](http://icecube.wisc.edu) and other projects.
+[D3](http://d3js.org/)-based histogramming and plotting library
+
+(for use in [IceCube](http://icecube.wisc.edu) and other projects).
 
 **This is a work in progress**.
 
@@ -19,19 +20,19 @@ our requirements, which are:
 #### DONE
 
 - Minimal visual noise
-- Make histograms / bar charts based on provided array of bins
+- Make histograms / bar graphs based on provided array of bin heights
     - Display X and Y axes
     - Show X and Y axis labels
     - Single or multiple plots per page, of various sizes
     - Draw horizontal and vertical lines on top of plot
     - Add rectangular regions on top of plot
+    - Add text to plot in either data or display units
 
 #### Not done
 
 - Support line plots, scatter plots
 - Show gaps in data
 - Error bars
-- Add text to plot
 - Zooming - in JavaScript with available points
 - Panning - same question
 - Exporting data from plot
