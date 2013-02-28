@@ -23,27 +23,32 @@ function testdata() {
 
 bars({data: [testdata()],
       div: "plot1",
+      size: [w, h],
       xlabel: "SMT-8",
       ylabel: "N",
       range: [0, 100],
-      size: [w, h]});
+      extras: [{region: {min: 60, max: 80, color: "lavender"}}],
+});
 
 bars({data: [testdata()],
       div: "plot2",
+      size: [w, h],
       xlabel: "Slow Monopole",
       ylabel: "Counts",
       range: [2000, 4000],
       extras: [{vbar: {pos: 2500, color: "blue"}},
                {vbar: {pos: 3250, color: "red"}}],
-      size: [w, h]});
+});
 
 bars({data: [testdata()],
       div: "plot3",
+      size: [w, h],
       xlabel: "sin(l)",
       ylabel: "Neutrinos",
       range: [-1, 1],
-      extras: [{hbar: {pos: 100, color: "orange"}}],
-      size: [w, h]});
+      extras: [{hbar: {pos: 100, color: "orange"}},
+               {region: {min: -1, max: -0.5, color: "linen"}}],
+});
 
 </script>
 </body>

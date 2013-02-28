@@ -19,16 +19,6 @@ function bars(opt) {
           .attr("width", w)
           .attr("height", h);
 
-    svg.selectAll("rect")
-       .data(dataset)
-       .enter()
-       .append("rect")
-       .attr("x", function(d, i) { return binscale(i) ; })
-       .attr("y", function(d) { return yscale(d); })
-       .attr("fill", "grey")
-       .attr("width", w / dataset.length - 0.1)
-       .attr("height", function(d) { return h - (padding + yscale(d)); });
-
     xAxis = d3.svg.axis().scale(xscale).orient("bottom").ticks(5);
     svg.append("g")
         .attr("class", "axis")
@@ -67,6 +57,27 @@ function bars(opt) {
     }
     var vbars = select(opt.extras, "vbar");
     var hbars = select(opt.extras, "hbar");
+    var regions = select(opt.extras, "region");
+
+    // Content of plots, in order of z-height:
+    regions.map(function(v) {
+                  svg.append("svg:rect")
+                        .attr("x", xscale(v.region.min))
+                        .attr("y", yscale(d3.max(dataset)))
+                        .attr("width", xscale(v.region.max) - xscale(v.region.min))
+                        .attr("height", yscale(0) - yscale(d3.max(dataset)))
+                        .attr("fill", v.region.color);
+    });
+
+    svg.selectAll("rect")
+       .data(dataset)
+       .enter()
+       .append("rect")
+       .attr("x", function(d, i) { return binscale(i) ; })
+       .attr("y", function(d) { return yscale(d); })
+       .attr("fill", "grey")
+       .attr("width", w / dataset.length - 0.1)
+       .attr("height", function(d) { return h - (padding + yscale(d)); });
     vbars.map(function(v) {
                   svg.append("svg:line")
                       .attr("x1", xscale(v.vbar.pos))
@@ -83,4 +94,6 @@ function bars(opt) {
                       .attr("y2", yscale(v.hbar.pos))
                       .style("stroke", v.hbar.color);
     });
+
+
 }

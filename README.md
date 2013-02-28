@@ -24,13 +24,13 @@ our requirements, which are:
     - Show X and Y axis labels
     - Single or multiple plots per page, of various sizes
     - Draw horizontal and vertical lines on top of plot
+    - Add rectangular regions on top of plot
 
 #### Not done
 
 - Support line plots, scatter plots
 - Show gaps in data
 - Error bars
-- Add rectangular regions on top of plot
 - Add text to plot
 - Zooming - in JavaScript with available points
 - Panning - same question
