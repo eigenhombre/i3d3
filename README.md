@@ -23,7 +23,7 @@ our requirements, which are:
     - Display X and Y axes
     - Show X and Y axis labels
     - Single or multiple plots per page, of various sizes
-    - Draw horizontal an vertical lines on top of plot
+    - Draw horizontal and vertical lines on top of plot
 
 #### Not done
 
