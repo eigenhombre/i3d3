@@ -4,18 +4,21 @@ i3d3
 [D3](http://d3js.org/)-based plotting and histogramming library, for
 use in [IceCube](http://icecube.wisc.edu) and other projects.
 
+**This is a work in progress**.
+
 We looked around at quite a few JavaScript plotting options to meet
 our requirements, which are:
 
 #### DONE
 
 - Show histograms
-- Show axes
-- Single or multiple plots per page, of various sizes
+    - Show axes
+    - Single or multiple plots per page, of various sizes
+    - Show X axis label
 
 #### Not done
 
-- Show axis labels
+- Set X axis range on histograms
 - Support line plots, scatter plots
 - Show gaps in data
 - Error bars
@@ -31,11 +34,13 @@ our requirements, which are:
 - Show (x,y) plot coordinates of mouse
 - Plot results of a fit overlaid with the histogram (i.e. gaussian over SPE fit)
 
-D3.js does not provide these directly but is sufficiently powerful,
-flexible and fast to provide a foundation to allow us to implement
-these ourselves.
+None of the canned plotting / graphing packages we looked at were
+quite what we wanted; D3.js does not provide these directly but is
+sufficiently powerful, flexible and fast to provide a foundation to
+allow us to implement these ourselves.
 
 #### References
 
 http://stackoverflow.com/questions/6766547/javascript-graphing-library
 
+http://www.amazon.com/Interactive-Data-Visualization-Scott-Murray/dp/1449339735/ref=pd_sim_b_1
