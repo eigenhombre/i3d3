@@ -1,16 +1,24 @@
 i3d3
 ====
 
-[D3](http://d3js.org/)-based plotting and histogramming library, for
+[D3](http://d3js.org/)-based histogramming and plotting library, for
 use in [IceCube](http://icecube.wisc.edu) and other projects.
 
 **This is a work in progress**.
 
-We looked around at quite a few JavaScript plotting options to meet
+We looked around at 
+[quite](https://code.google.com/p/flot/)
+[a](http://www.jqplot.com/tests/) 
+[few](http://www.highcharts.com/)
+JavaScript 
+plotting
+libraries
+to meet
 our requirements, which are:
 
 #### DONE
 
+- Minimal visual noise
 - Make histograms / bar charts based on provided array of bins
     - Show axes
     - Single or multiple plots per page, of various sizes
