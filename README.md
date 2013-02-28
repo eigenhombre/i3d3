@@ -41,6 +41,8 @@ allow us to implement these ourselves.
 
 #### Sample Output
 
+Example output, created from [this HTML](example.html):
+
 ![Example output](example.png "Example output")
 
 #### References
