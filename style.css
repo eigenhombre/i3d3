@@ -1,6 +1,6 @@
 .axis path, .axis line {
     fill: none;
-    stroke: grey;
+    stroke: lightgrey;
     shape-rendering: black;
 }
 .axis text, .label {

@@ -58,4 +58,29 @@ function bars(opt) {
         .text(opt.ylabel)
         .attr('transform',
               function(d,i,j) { return 'rotate(-90 ' + xx + ', ' + yy + ')' });
+
+    if(! opt.extras) {
+        opt.extras = [];
+    }
+    function select(vec, key) { 
+        return vec.filter(function(x) { return x[key] !== undefined; }); 
+    }
+    var vbars = select(opt.extras, "vbar");
+    var hbars = select(opt.extras, "hbar");
+    vbars.map(function(v) {
+                  svg.append("svg:line")
+                      .attr("x1", xscale(v.vbar.pos))
+                      .attr("y1", yscale(d3.max(dataset)))
+                      .attr("x2", xscale(v.vbar.pos))
+                      .attr("y2", yscale(d3.min(dataset)))
+                      .style("stroke", v.vbar.color);
+    });
+    hbars.map(function(v) {
+                  svg.append("svg:line")
+                      .attr("x1", xscale(xmin))
+                      .attr("y1", yscale(v.hbar.pos))
+                      .attr("x2", xscale(xmax))
+                      .attr("y2", yscale(v.hbar.pos))
+                      .style("stroke", v.hbar.color);
+    });
 }

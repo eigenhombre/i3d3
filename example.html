@@ -26,27 +26,24 @@ bars({data: [testdata()],
       xlabel: "SMT-8",
       ylabel: "N",
       range: [0, 100],
-      size: [w, h],
-      h: h,
-      w: w});
+      size: [w, h]});
 
 bars({data: [testdata()],
       div: "plot2",
       xlabel: "Slow Monopole",
       ylabel: "Counts",
       range: [2000, 4000],
-      size: [w, h],
-      h: h,
-      w: w});
+      extras: [{vbar: {pos: 2500, color: "blue"}},
+               {vbar: {pos: 3250, color: "red"}}],
+      size: [w, h]});
 
 bars({data: [testdata()],
       div: "plot3",
       xlabel: "sin(l)",
       ylabel: "Neutrinos",
       range: [-1, 1],
-      size: [w, h],
-      h: h,
-      w: w});
+      extras: [{hbar: {pos: 100, color: "orange"}}],
+      size: [w, h]});
 
 </script>
 </body>

@@ -23,11 +23,10 @@ our requirements, which are:
     - Display X and Y axes
     - Show X and Y axis labels
     - Single or multiple plots per page, of various sizes
+    - Draw horizontal an vertical lines on top of plot
 
 #### Not done
 
-- Add plot titles
-- Draw lines on top of plot
 - Support line plots, scatter plots
 - Show gaps in data
 - Error bars
