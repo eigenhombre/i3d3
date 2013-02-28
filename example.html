@@ -21,10 +21,9 @@ function testdata() {
     return d3.range(30).map(d3.random.logNormal(Math.log(30)));
 }
 
-bars(testdata(), "SMT-8", h, w, "plot1");
-bars(testdata(), "Slow Monopole", h, w, "plot2");
-bars(testdata(), "Galactic Center", h, w, "plot3");
-
+bars(testdata(), [0, 100], "SMT-8", h, w, "plot1");
+bars(testdata(), [2000, 4000], "Slow Monopole", h, w, "plot2");
+bars(testdata(), [-1, 1], "Galactic Center", h, w, "plot3");
 </script>
 </body>
 </html>

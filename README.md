@@ -47,34 +47,9 @@ quite what we wanted; D3.js does not provide these directly but is
 sufficiently powerful, flexible and fast to provide a foundation to
 allow us to implement these ourselves.
 
-#### Example:
+#### Example
 
-    <link rel="stylesheet" type="text/css" href="style.css"/>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
-
-    <div class="plot" id="plot1"></div>
-    <div class="plot" id="plot2"></div>
-    <div class="plot" id="plot3"></div>
-
-    <script src="i3d3.js" type="text/javascript"></script>
-
-    <script>
-
-    var h = 180,
-        w = 330;
-
-    function testdata() {
-        return d3.range(30).map(d3.random.logNormal(Math.log(30)));
-    }
-
-    bars(testdata(), "SMT-8", h, w, "plot1");
-    bars(testdata(), "Slow Monopole", h, w, "plot2");
-    bars(testdata(), "Galactic Center", h, w, "plot3");
-
-    </script> 
-
-
-Example output, created from [this HTML](example.html):
+The following output was created from [this simple HTML](example.html):
 
 ![Example output](example.png "Example output")
 
