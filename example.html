@@ -18,11 +18,11 @@
 var h = 200,
     w = 280;
 
-function testdata() {
-    return d3.range(60).map(d3.random.logNormal(Math.log(30)));
+function testdata(n) {
+    return d3.range(n).map(d3.random.logNormal(Math.log(30)));
 }
 
-var data = testdata();
+var data = testdata(60);
 bars({data: [data],
       div: "plot1",
       size: [w, h],
@@ -34,7 +34,7 @@ bars({data: [data],
                        color: "rosybrown"}}],
 });
 
-bars({data: [testdata()],
+bars({data: [testdata(30)],
       div: "plot2",
       size: [w, h],
       xlabel: "Slow Monopole",
@@ -44,7 +44,7 @@ bars({data: [testdata()],
                {vbar: {pos: 3250, color: "red"}}],
 });
 
-bars({data: [testdata()],
+bars({data: [testdata(100)],
       div: "plot3",
       size: [w, h],
       xlabel: "sin(l)",
@@ -57,7 +57,7 @@ bars({data: [testdata()],
                        color: "orange", units: "pixels"}}],
 });
 
-data = testdata();
+data = testdata(15);
 bars({data: [data],
       div: "plot4",
       size: [w, h],
