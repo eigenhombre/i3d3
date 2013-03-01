@@ -5,7 +5,7 @@ i3d3
 
 ### Example
 
-The following output was created from [this simple HTML](example.html):
+The following output was created from [this HTML](example.html):
 
 ![Example output](example.png "Example output")
 
@@ -27,13 +27,12 @@ JavaScript plotting libraries to meet our requirements, which are:
     - Draw horizontal, vertical and other lines on top of plot
     - Add rectangular regions on top of plot
     - Add text to plot in either data or display units
-- Scatter plots
-    - Multiple data sets per page in different colors
+- Scatter / line plots
+    - Multiple data sets per page in different colors/widths
 
 #### Not done
 
-- Line plots
-- Histograms and scatter plots on same diagram
+- Histograms and scatter / line plots on same diagram
 - Show (x,y) plot coordinates of mouse
 - Show gaps in data
 - Error bars

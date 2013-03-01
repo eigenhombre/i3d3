@@ -88,7 +88,7 @@ function bars(opt) {
        .append("rect")
        .attr("x", function(d, i) { return binscale(i) ; })
        .attr("y", function(d) { return yscale(d); })
-       .attr("fill", "grey")
+       .attr("fill", opt.data[0].color && opt.data[0].color || "grey")
        .attr("width", w / dataset.length - 0.1)
        .attr("height", function(d) { return h - (padding + yscale(d)); });
 
@@ -193,15 +193,31 @@ function points(opt) {
               function(d,i,j) { return 'rotate(-90 ' + xx + ', ' + yy + ')' });
 
     // Actual data points
-    for(i=0; i < opt.data.length; i++) {
+    var pointsets = opt.data.filter(function (e) { return e.type === "points"; });
+    for(i=0; i < pointsets.length; i++) {
         svg.append("g").attr("points_" + i);
         svg.selectAll("points_" + i + " circle")
-            .data(opt.data[i].values)
+            .data(pointsets[i].values)
             .enter()
             .append("circle")
             .attr("cx", function(d, i) { return xscale(d.x); })
             .attr("cy", function(d) { return yscale(d.y); })
-            .attr("r", opt.data[i].size && opt.data[i].size || 4)
-            .attr("fill", opt.data[i].color && opt.data[i].color || "grey");
+            .attr("r", pointsets[i].size && pointsets[i].size || 4)
+            .attr("fill", pointsets[i].color && pointsets[i].color || "grey");
+    }
+
+    var line = d3.svg.line()
+        .x(function(d) { return xscale(d.x); })
+        .y(function(d) { return yscale(d.y); });
+
+    var linesets = opt.data.filter(function (e) { return e.type === "lines"; });
+    for(i=0; i < linesets.length; i++) {
+        svg.append("path")
+            .attr("d", line(linesets[i].values))
+            .attr("class", "lines_" + i)
+            .attr("fill", "none")
+            .attr("stroke", linesets[i].color && linesets[i].color || "grey")
+            .attr("stroke-width", linesets[i].width && linesets[i].width || 1);
+        l = linesets[0];
     }
 }

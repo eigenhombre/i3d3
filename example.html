@@ -25,7 +25,8 @@ function testdata(n) {
 
 var data = testdata(60);
 bars({data: [{type: "bars",
-              bins: data}],
+              bins: data,
+              color: "rosybrown"}],
       div: "plot1",
       size: [w, h],
       xlabel: "SMT-8",
@@ -37,8 +38,9 @@ bars({data: [{type: "bars",
 });
 
 bars({data: [{type: "bars",
-              bins: testdata(30)}],
-      div: "plot2",
+              bins: testdata(30),
+              color: "lightgrey"}],
+      div: "plot3",
       size: [w, h],
       xlabel: "Slow Monopole",
       ylabel: "Counts",
@@ -49,7 +51,7 @@ bars({data: [{type: "bars",
 
 bars({data: [{type: "bars",
               bins: testdata(100)}],
-      div: "plot3",
+      div: "plot4",
       size: [w, h],
       xlabel: "sin(l)",
       ylabel: "Neutrinos",
@@ -63,8 +65,9 @@ bars({data: [{type: "bars",
 
 data = testdata(15);
 bars({data: [{type: "bars",
-              bins: data}],
-      div: "plot4",
+              bins: data,
+              color: "lightsalmon"}],
+      div: "plot5",
       size: [w, h],
       xlabel: "Source Data",
       ylabel: "Entries",
@@ -87,10 +90,12 @@ function sample_curve(phase, noise_weight, offset, sig2) {
 
 var points1 = sample_curve(0.1, 20, 0, 2);
 var points2 = sample_curve(3, 3, 0.2, 0.7);
+var points3 = sample_curve(2, 10, 0.1, 0.4);
 
 points({data: [{type: "points", values: points1, color: "#e6e6fa", size: 4},
-               {type: "points", values: points2, color: "orange", size: 1.4}],
-        div: "plot5",
+               {type: "points", values: points2, color: "orange", size: 1.4},
+               {type: "lines", values: points3, color: "palevioletred", width: 1}],
+        div: "plot2",
         size: [w, h],
         xlabel: "X",
         ylabel: "Y",
