@@ -16,3 +16,6 @@
 .note {
     font-size: 12px;
 }
+#plot1, #plot2, #plot3 {
+    float: left;
+}

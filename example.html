@@ -9,13 +9,14 @@
 <div class="plot" id="plot1"></div>
 <div class="plot" id="plot2"></div>
 <div class="plot" id="plot3"></div>
+<div class="plot" id="plot4"></div>
 
 <script src="i3d3.js" type="text/javascript"></script>
 
 <script>
 
 var h = 200,
-    w = 330;
+    w = 280;
 
 function testdata() {
     return d3.range(60).map(d3.random.logNormal(Math.log(30)));
@@ -53,7 +54,22 @@ bars({data: [testdata()],
                {vbar: {pos: -0.5, color: "lightgrey"}},
                {region: {min: -1, max: -0.5, color: "linen"}},
                {note: {x: 0.7 * w, y: 0.4 * h, text: "Nu_e", 
-                       color: "palevioletred", units: "pixels"}}],
+                       color: "orange", units: "pixels"}}],
+});
+
+data = testdata();
+bars({data: [data],
+      div: "plot4",
+      size: [w, h],
+      xlabel: "Source Data",
+      ylabel: "Entries",
+      range: [500, 1500],
+      extras: [{line: {x0: 600, y0: d3.max(data) * 0.2,
+                       x1: 1300, y1: d3.max(data) * 0.6,
+                       color: "darkolivegreen"}},
+               {note: {x: 0.4 * w, y: 0.5 * h, text: "Bad Fit", 
+                       color: "darkolivegreen", units: "pixels"}}],
+
 });
 
 </script>

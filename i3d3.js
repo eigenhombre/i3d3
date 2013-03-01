@@ -66,6 +66,7 @@ function bars(opt) {
     var hbars = select(opt.extras, "hbar");
     var regions = select(opt.extras, "region");
     var notes = select(opt.extras, "note");
+    var lines = select(opt.extras, "line");
 
     // Content of plots, in order of z-height. See
     // http://stackoverflow.com/questions/13595175/updating-svg-element-z-index-with-d3
@@ -117,7 +118,6 @@ function bars(opt) {
                       X = xscale(v.note.x);
                       Y = yscale(v.note.y);
                   }
-                  console.log(X, Y);
                   svg.append("text")
                       .attr("class", "note")
                       .attr("x", X)
@@ -125,5 +125,12 @@ function bars(opt) {
                       .attr("stroke", v.note.color)
                       .text(v.note.text);
     });
-
+    lines.map(function(v) {
+                  svg.append("svg:line")
+                      .attr("x1", xscale(v.line.x0))
+                      .attr("y1", yscale(v.line.y0))
+                      .attr("x2", xscale(v.line.x1))
+                      .attr("y2", yscale(v.line.y1))
+                      .style("stroke", v.line.color);
+    });
 }

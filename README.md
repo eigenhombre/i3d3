@@ -24,12 +24,13 @@ our requirements, which are:
     - Display X and Y axes
     - Show X and Y axis labels
     - Single or multiple plots per page, of various sizes
-    - Draw horizontal and vertical lines on top of plot
+    - Draw horizontal, vertical and other lines on top of plot
     - Add rectangular regions on top of plot
     - Add text to plot in either data or display units
 
 #### Not done
 
+- Show (x,y) plot coordinates of mouse
 - Support line plots, scatter plots
 - Show gaps in data
 - Error bars
@@ -39,7 +40,6 @@ our requirements, which are:
 - Exporting plot graphic (SVG or PDF)
 - Ability to “reset” the plot (if, for example, zoomed beyond recognition)
 - Switch y-axis to logarithmic
-- Show (x,y) plot coordinates of mouse
 - Plot results of a fit overlaid with the histogram (i.e. gaussian over SPE fit)
 
 None of the canned plotting / graphing packages we looked at were
