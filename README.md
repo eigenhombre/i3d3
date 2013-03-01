@@ -7,15 +7,19 @@ i3d3
 
 **This is a work in progress**.
 
+### Example
+
+The following output was created from [this simple HTML](example.html):
+
+![Example output](example.png "Example output")
+
+### Background
+
 We looked around at 
 [quite](https://code.google.com/p/flot/)
 [a](http://www.jqplot.com/tests/) 
 [few](http://www.highcharts.com/)
-JavaScript 
-plotting
-libraries
-to meet
-our requirements, which are:
+JavaScript plotting libraries to meet our requirements, which are:
 
 #### DONE
 
@@ -47,13 +51,7 @@ quite what we wanted; D3.js does not provide these directly but is
 sufficiently powerful, flexible and fast to provide a foundation to
 allow us to implement these ourselves.
 
-#### Example
-
-The following output was created from [this simple HTML](example.html):
-
-![Example output](example.png "Example output")
-
-#### References
+### References
 
 http://stackoverflow.com/questions/6766547/javascript-graphing-library
 
