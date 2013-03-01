@@ -133,4 +133,6 @@ function bars(opt) {
                       .attr("y2", yscale(v.line.y1))
                       .style("stroke", v.line.color);
     });
+
+    return svg;
 }
