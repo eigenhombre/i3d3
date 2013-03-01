@@ -6,7 +6,7 @@ function bars(opt) {
     // Initial setup
     var xAxis, yAxis,
         padding = 50,
-        dataset = opt.data[0],
+        dataset = opt.data[0].bins,
         xmin = opt.range[0],
         xmax = opt.range[1],
         w = opt.size[0],
@@ -93,46 +93,115 @@ function bars(opt) {
        .attr("height", function(d) { return h - (padding + yscale(d)); });
 
     // Horizontal and vertical lines
-    vbars.map(function(v) {
-                  svg.append("svg:line")
-                      .attr("x1", xscale(v.vbar.pos))
-                      .attr("y1", yscale(d3.max(dataset)))
-                      .attr("x2", xscale(v.vbar.pos))
-                      .attr("y2", yscale(d3.min(dataset)))
-                      .style("stroke", v.vbar.color);
+    vbars.forEach(function(v) {
+                      svg.append("svg:line")
+                          .attr("x1", xscale(v.vbar.pos))
+                          .attr("y1", yscale(d3.max(dataset)))
+                          .attr("x2", xscale(v.vbar.pos))
+                          .attr("y2", yscale(d3.min(dataset)))
+                          .style("stroke", v.vbar.color);
     });
-    hbars.map(function(v) {
-                  svg.append("svg:line")
-                      .attr("x1", xscale(xmin))
-                      .attr("y1", yscale(v.hbar.pos))
-                      .attr("x2", xscale(xmax))
-                      .attr("y2", yscale(v.hbar.pos))
-                      .style("stroke", v.hbar.color);
+    hbars.forEach(function(v) {
+                      svg.append("svg:line")
+                          .attr("x1", xscale(xmin))
+                          .attr("y1", yscale(v.hbar.pos))
+                          .attr("x2", xscale(xmax))
+                          .attr("y2", yscale(v.hbar.pos))
+                          .style("stroke", v.hbar.color);
     });
-    notes.map(function(v) {
-                  var X, Y;
-                  if(v.note.units === "pixels") {
-                      X = v.note.x;
-                      Y = v.note.y;
-                  } else {
-                      X = xscale(v.note.x);
-                      Y = yscale(v.note.y);
-                  }
-                  svg.append("text")
-                      .attr("class", "note")
-                      .attr("x", X)
-                      .attr("y", Y)
-                      .attr("stroke", v.note.color)
-                      .text(v.note.text);
+    notes.forEach(function(v) {
+                      var X, Y;
+                      if(v.note.units === "pixels") {
+                          X = v.note.x;
+                          Y = v.note.y;
+                      } else {
+                          X = xscale(v.note.x);
+                          Y = yscale(v.note.y);
+                      }
+                      svg.append("text")
+                          .attr("class", "note")
+                          .attr("x", X)
+                          .attr("y", Y)
+                          .attr("stroke", v.note.color)
+                          .text(v.note.text);
     });
-    lines.map(function(v) {
-                  svg.append("svg:line")
-                      .attr("x1", xscale(v.line.x0))
-                      .attr("y1", yscale(v.line.y0))
-                      .attr("x2", xscale(v.line.x1))
-                      .attr("y2", yscale(v.line.y1))
-                      .style("stroke", v.line.color);
+    lines.forEach(function(v) {
+                      svg.append("svg:line")
+                          .attr("x1", xscale(v.line.x0))
+                          .attr("y1", yscale(v.line.y0))
+                          .attr("x2", xscale(v.line.x1))
+                          .attr("y2", yscale(v.line.y1))
+                          .style("stroke", v.line.color);
     });
 
     return svg;
+}
+
+
+function points(opt) {
+    // Initial setup
+    var xAxis, yAxis, i,
+        padding = 50,
+        dataset = opt.data[0].values,
+        allpoints = [].concat.apply([], opt.data.map(function(e) { return e.values; })),
+        xextent = d3.extent(allpoints, function(d) { return d.x }),
+        yextent = d3.extent(allpoints, function(d) { return d.y }),
+
+        w = opt.size[0],
+        h = opt.size[1],
+        xscale = d3.scale.linear()
+          .domain(xextent)
+          .range([padding, w - padding]),
+        yscale = d3.scale.linear()
+          .domain(yextent)
+          .range([h - padding, padding]),
+        svg = d3.select("#" + opt.div).append("svg")
+          .attr("width", w)
+          .attr("height", h);
+
+    // Set up axes
+    xAxis = d3.svg.axis().scale(xscale).orient("bottom").ticks(5);
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + (h - padding) + ")")
+        .call(xAxis);
+
+    yAxis = d3.svg.axis().scale(yscale).orient("left").ticks(3);
+
+    // Set up axis labels
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(" + padding + ",0)")
+        .call(yAxis);
+
+    svg.append("text")
+        .attr("class", "label")
+        .attr("text-anchor", "end")
+        .attr("x", w - padding + 5)
+        .attr("y", h - 10)
+        .text(opt.xlabel);
+
+    var yy = 50;
+    var xx = 10;
+    svg.append("text")
+        .attr("class", "label")
+        .attr("text-anchor", "end")
+        .attr("x", xx)
+        .attr("y", yy)
+        .text(opt.ylabel)
+        .attr('transform',
+              function(d,i,j) { return 'rotate(-90 ' + xx + ', ' + yy + ')' });
+
+    // Actual data points
+    for(i=0; i < opt.data.length; i++) {
+        svg.append("g").attr("points_" + i);
+        svg.selectAll("points_" + i + " circle")
+            .data(opt.data[i].values)
+            .enter()
+            .append("circle")
+            .attr("cx", function(d, i) { return xscale(d.x); })
+            .attr("cy", function(d) { return yscale(d.y); })
+            .attr("r", opt.data[i].size && opt.data[i].size || 4)
+            .attr("fill", opt.data[i].color && opt.data[i].color || "grey");
+    }
 }

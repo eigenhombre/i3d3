@@ -20,18 +20,21 @@ JavaScript plotting libraries to meet our requirements, which are:
 #### DONE
 
 - Minimal visual noise
-- Make histograms / bar graphs based on provided array of bin heights
+- Histogram / bar graphs based on provided array of bin heights
     - Display X and Y axes
     - Show X and Y axis labels
     - Single or multiple plots per page, of various sizes
     - Draw horizontal, vertical and other lines on top of plot
     - Add rectangular regions on top of plot
     - Add text to plot in either data or display units
+- Scatter plots
+    - Multiple data sets per page in different colors
 
 #### Not done
 
+- Line plots
+- Histograms and scatter plots on same diagram
 - Show (x,y) plot coordinates of mouse
-- Support line plots, scatter plots
 - Show gaps in data
 - Error bars
 - Zooming - in JavaScript with available points
@@ -52,3 +55,8 @@ allow us to implement these ourselves.
 http://stackoverflow.com/questions/6766547/javascript-graphing-library
 
 http://www.amazon.com/Interactive-Data-Visualization-Scott-Murray/dp/1449339735/ref=pd_sim_b_1
+
+
+### Author
+
+[John Jacobsen](http://eigenhombre.com)
