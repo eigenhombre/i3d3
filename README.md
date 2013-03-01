@@ -15,7 +15,7 @@ We looked around at
 [quite](https://code.google.com/p/flot/)
 [a](http://www.jqplot.com/tests/) 
 [few](http://www.highcharts.com/)
-JavaScript plotting libraries to meet our requirements, which are:
+JavaScript plotting libraries which might meet our requirements, which are:
 
 #### DONE
 
