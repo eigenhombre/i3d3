@@ -1,11 +1,7 @@
 i3d3
 ====
 
-[D3](http://d3js.org/)-based histogramming and plotting library
-
-(for use in [IceCube](http://icecube.wisc.edu) and other projects).
-
-**This is a work in progress**.
+[D3](http://d3js.org/)-based histogramming and plotting library (for use in [IceCube](http://icecube.wisc.edu) and other projects).  **This is a work in progress**.
 
 ### Example
 
