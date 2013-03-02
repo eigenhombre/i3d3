@@ -3,9 +3,9 @@ i3d3
 
 [D3](http://d3js.org/)-based histogramming and plotting library (for use in [IceCube](http://icecube.wisc.edu) and other projects).  **This is a work in progress**.
 
-### Example
+### Examples
 
-The following output was created from [this HTML](example.html):
+The following examples were all created from [this HTML](example.html):
 
 ![Example output](example.png "Example output")
 
@@ -21,11 +21,13 @@ JavaScript plotting libraries which might meet our requirements, which are:
 
 - Minimal visual noise
 - Histogram / bar graphs based on provided array of bin heights
-    - Display X and Y axes
+    - Display X and Y axes, with labels
+    - Set color, transparency of histogram
+    - Multiple histograms per plot
     - Show X and Y axis labels
     - Single or multiple plots per page, of various sizes
+    - Add rectangular highlights to X-ranges underneath histograms
     - Draw horizontal, vertical and other lines on top of plot
-    - Add rectangular regions on top of plot
     - Add text to plot in either data or display units
 - Scatter / line plots
     - Multiple data sets per page in different colors/widths
@@ -34,15 +36,14 @@ JavaScript plotting libraries which might meet our requirements, which are:
 
 - Histograms and scatter / line plots on same diagram
 - Show (x,y) plot coordinates of mouse
-- Show gaps in data
+- Log / linear axes
 - Error bars
-- Zooming - in JavaScript with available points
-- Panning - same question
+- Time series X-axes
+- Show gaps in data
+- Zooming / panning
 - Exporting data from plot
-- Exporting plot graphic (SVG or PDF)
+- Exporting plot graphic (either SVG or PDF would be OK)
 - Ability to “reset” the plot (if, for example, zoomed beyond recognition)
-- Switch y-axis to logarithmic
-- Plot results of a fit overlaid with the histogram (i.e. gaussian over SPE fit)
 
 None of the canned plotting / graphing packages we looked at were
 quite what we wanted; D3.js does not provide these directly but is

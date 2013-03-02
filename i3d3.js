@@ -4,16 +4,13 @@ function select(vec, key) {
 
 function bars(opt) {
     // Initial setup
-    var xAxis, yAxis,
+    var xAxis, yAxis, i, binscale,
         padding = 50,
         dataset = opt.data[0].bins,
         xmin = opt.range[0],
         xmax = opt.range[1],
         w = opt.size[0],
         h = opt.size[1],
-        binscale = d3.scale.linear()
-          .domain([0, dataset.length])
-          .range([padding, w - padding]),
         xscale = d3.scale.linear()
           .domain([xmin, xmax])
           .range([padding, w - padding]),
@@ -81,16 +78,25 @@ function bars(opt) {
                         .attr("fill", v.region.color);
     });
 
-    // Actual bins
-    svg.selectAll("rect")
-       .data(dataset)
-       .enter()
-       .append("rect")
-       .attr("x", function(d, i) { return binscale(i) ; })
-       .attr("y", function(d) { return yscale(d); })
-       .attr("fill", opt.data[0].color && opt.data[0].color || "grey")
-       .attr("width", w / dataset.length - 0.1)
-       .attr("height", function(d) { return h - (padding + yscale(d)); });
+    // Selected sets of bins
+    var barsets = opt.data.filter(function (e) { return e.type === "bars"; });
+    for(i=0; i < barsets.length; i++) {
+        binscale = d3.scale.linear()
+          .domain([0, barsets[i].bins.length])
+          .range([padding, w - padding]),
+        svg.append("g").attr("bars_" + i);
+        svg.selectAll("bars_" + i + " rect")
+            .data(barsets[i].bins)
+            .enter()
+            .append("rect")
+            .attr("x", function(d, j) { return binscale(j) ; })
+            .attr("y", function(d) { return yscale(d); })
+            .attr("fill", barsets[i].color && barsets[i].color || "grey")
+            .attr("stroke", barsets[i].color && barsets[i].color || "grey")
+            .attr("width", (xscale(xmax) - xscale(xmin)) / barsets[i].bins.length - 0.1)
+            .attr("height", function(d) { return h - (padding + yscale(d)); })
+            .attr("opacity", barsets[i].opacity && barsets[i].opacity || 1);
+    }
 
     // Horizontal and vertical lines
     vbars.forEach(function(v) {
@@ -142,7 +148,6 @@ function points(opt) {
     // Initial setup
     var xAxis, yAxis, i,
         padding = 50,
-        dataset = opt.data[0].values,
         allpoints = [].concat.apply([], opt.data.map(function(e) { return e.values; })),
         xextent = d3.extent(allpoints, function(d) { return d.x }),
         yextent = d3.extent(allpoints, function(d) { return d.y }),

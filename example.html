@@ -19,14 +19,19 @@
 var h = 200,
     w = 280;
 
-function testdata(n) {
-    return d3.range(n).map(d3.random.logNormal(Math.log(30)));
+function testdata(n, offset) {
+    return d3.range(n)
+        .map(d3.random.logNormal(Math.log(30)))
+        .map(function(x) { return x + (offset && offset || 0) });
 }
 
-var data = testdata(60);
+var data = testdata(60, 200);
 bars({data: [{type: "bars",
               bins: data,
-              color: "rosybrown"}],
+              color: "rosybrown"},
+             {type: "bars",
+              bins: testdata(20),
+              opacity: 0.7}],
       div: "plot1",
       size: [w, h],
       xlabel: "SMT-8",
