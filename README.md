@@ -15,7 +15,7 @@ We looked around at
 [quite](https://code.google.com/p/flot/)
 [a](http://www.jqplot.com/tests/) 
 [few](http://www.highcharts.com/)
-JavaScript plotting libraries which might meet our requirements, which are:
+JavaScript plotting libraries which might meet our requirements, which are (watch this space for updated status as the project progresses):
 
 #### DONE
 
@@ -26,16 +26,18 @@ JavaScript plotting libraries which might meet our requirements, which are:
     - Multiple histograms per plot
     - Show X and Y axis labels
     - Single or multiple plots per page, of various sizes
-    - Add rectangular highlights to X-ranges underneath histograms
-    - Draw horizontal, vertical and other lines on top of plot
-    - Add text to plot in either data or display units
 - Scatter / line plots
     - Multiple data sets per page in different colors/widths
+    - Histograms and scatter / line plots on same diagram
 
 #### Not done
 
-- Histograms and scatter / line plots on same diagram
+- Still need to be added to combined plots:
+    - Add rectangular highlights to X-ranges underneath histograms
+    - Draw horizontal, vertical and other lines on top of plot
+    - Add text to plot in either data or display units
 - Show (x,y) plot coordinates of mouse
+- Wrap everything in an object to avoid namespace pollution
 - Log / linear axes
 - Error bars
 - Time series X-axes

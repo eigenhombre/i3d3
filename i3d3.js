@@ -73,7 +73,6 @@ function bars(opt) {
     regions = select(opt.extras, "region");
     notes = select(opt.extras, "note");
     lines = select(opt.extras, "line");
-
     // Content of plots, in order of z-height. See
     // http://stackoverflow.com/questions/13595175/updating-svg-element-z-index-with-d3
 
@@ -154,13 +153,33 @@ function bars(opt) {
 }
 
 
-function points(opt) {
+function concat_contents(l) {
+    return [].concat.apply([], l);
+}
+
+function combine_values(data) {
+    return concat_contents(data.map(function (e) { return e.values; }));
+}
+
+function plot(opt) {
     // Initial setup
-    var xAxis, yAxis, i, xx, yy, line, linesets, pointsets,
+    var xAxis, yAxis, i, xx, yy, line, binscale, xmin, xmax,
+        pointsets = opt.data.filter(function (e) { return e.type === "points"; }),
+        linesets = opt.data.filter(function (e) { return e.type === "lines"; }),
+        barsets = opt.data.filter(function(e) { return e.type === "bars"; }),
         padding = 50,
-        allpoints = [].concat.apply([], opt.data.map(function (e) { return e.values; })),
-        xextent = d3.extent(allpoints, function (d) { return d.x; }),
-        yextent = d3.extent(allpoints, function (d) { return d.y; }),
+        allpoints = combine_values(pointsets.concat(linesets)),//FIXME: handle bins for histos
+        minhistx = Math.min.apply([], barsets.map(function (e) { return e.range[0]; })),
+        maxhistx = Math.max.apply([], barsets.map(function (e) { return e.range[1]; })),
+        maxhisty = Math.max.apply([], barsets.map(function (e) { return d3.max(e.bins); })),
+        minpointsx = Math.min.apply([], allpoints.map(function (d) { return d.x; })),
+        maxpointsx = Math.max.apply([], allpoints.map(function (d) { return d.x; })),
+        minpointsy = Math.min.apply([], allpoints.map(function (d) { return d.y; })),
+        maxpointsy = Math.max.apply([], allpoints.map(function (d) { return d.y; })),
+        xextent = [Math.min(minpointsx, minhistx),
+                   Math.max(maxpointsx, maxhistx)],
+        yextent = [Math.min(0, minpointsy), 
+                   Math.max(maxhisty, maxpointsy)],
 
         w = opt.size[0],
         h = opt.size[1],
@@ -207,8 +226,29 @@ function points(opt) {
         .attr('transform',
               function (d, i, j) { return 'rotate(-90 ' + xx + ', ' + yy + ')'; });
 
-    // Actual data points
-    pointsets = opt.data.filter(function (e) { return e.type === "points"; });
+
+    // Draw bars
+    for(i=0; i < barsets.length; i++) {
+        binscale = d3.scale.linear()
+          .domain(xextent)
+          .range([padding, w - padding]);
+        xmin = barsets[i].range[0],
+        xmax = barsets[i].range[1],
+        svg.append("g").attr("bars_" + i);
+        svg.selectAll("bars_" + i + " rect")
+            .data(barsets[i].bins)
+            .enter()
+            .append("rect")
+            .attr("x", function (d, j) { return xscale(xmin + (xmax-xmin) * j / barsets[i].bins.length);})
+            .attr("y", function (d) { return yscale(d); })
+            .attr("fill", ifor(barsets[i].color, "grey"))
+            .attr("stroke", ifor(barsets[i].color, "grey"))
+            .attr("width", (xscale(xmax) - xscale(xmin)) / barsets[i].bins.length - 0.1)
+            .attr("height", function (d) { return h - (padding + yscale(d)); })
+            .attr("opacity", ifor(barsets[i].opacity, 1));
+    }
+
+    // Draw point sets
     for(i=0; i < pointsets.length; i++) {
         svg.append("g").attr("points_" + i);
         svg.selectAll("points_" + i + " circle")
@@ -221,6 +261,7 @@ function points(opt) {
             .attr("fill", ifor(pointsets[i].color, "grey"));
     }
 
+    // Draw line sets
     line = d3.svg.line()
         .x(function (d) { return xscale(d.x); })
         .y(function (d) { return yscale(d.y); });
