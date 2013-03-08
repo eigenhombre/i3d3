@@ -1,10 +1,19 @@
+"use strict";
+/*global d3 */
+/*jslint plusplus: true, white: true */
+
 function select(vec, key) { 
-    return vec.filter(function(x) { return x[key] !== undefined; }); 
+    return vec.filter(function (x) { return x[key] !== undefined; }); 
+}
+
+function ifor(a, b) {
+    if (a) { return a; }
+    return b;
 }
 
 function bars(opt) {
     // Initial setup
-    var xAxis, yAxis, i, binscale,
+    var xAxis, yAxis, i, binscale, yy, xx, vbars, hbars, regions, notes, lines, barsets,
         padding = 50,
         dataset = opt.data[0].bins,
         xmin = opt.range[0],
@@ -43,8 +52,8 @@ function bars(opt) {
         .attr("y", h - 10)
         .text(opt.xlabel);
 
-    var yy = 50;
-    var xx = 10;
+    yy = 50;
+    xx = 10;
     svg.append("text")
         .attr("class", "label")
         .attr("text-anchor", "end")
@@ -52,24 +61,24 @@ function bars(opt) {
         .attr("y", yy)
         .text(opt.ylabel)
         .attr('transform',
-              function(d,i,j) { return 'rotate(-90 ' + xx + ', ' + yy + ')' });
+              function (d, i, j) { return 'rotate(-90 ' + xx + ', ' + yy + ')'; });
 
     // Set up extra elements for plots
     if(! opt.extras) {
         opt.extras = [];
     }
 
-    var vbars = select(opt.extras, "vbar");
-    var hbars = select(opt.extras, "hbar");
-    var regions = select(opt.extras, "region");
-    var notes = select(opt.extras, "note");
-    var lines = select(opt.extras, "line");
+    vbars = select(opt.extras, "vbar");
+    hbars = select(opt.extras, "hbar");
+    regions = select(opt.extras, "region");
+    notes = select(opt.extras, "note");
+    lines = select(opt.extras, "line");
 
     // Content of plots, in order of z-height. See
     // http://stackoverflow.com/questions/13595175/updating-svg-element-z-index-with-d3
 
     // Rectangular, colored regions of interest
-    regions.map(function(v) {
+    regions.map(function (v) {
                   svg.append("svg:rect")
                         .attr("x", xscale(v.region.min))
                         .attr("y", yscale(d3.max(dataset)))
@@ -79,27 +88,28 @@ function bars(opt) {
     });
 
     // Selected sets of bins
-    var barsets = opt.data.filter(function (e) { return e.type === "bars"; });
+
+    barsets = opt.data.filter(function (e) { return e.type === "bars"; });
     for(i=0; i < barsets.length; i++) {
         binscale = d3.scale.linear()
           .domain([0, barsets[i].bins.length])
-          .range([padding, w - padding]),
+          .range([padding, w - padding]);
         svg.append("g").attr("bars_" + i);
         svg.selectAll("bars_" + i + " rect")
             .data(barsets[i].bins)
             .enter()
             .append("rect")
-            .attr("x", function(d, j) { return binscale(j) ; })
-            .attr("y", function(d) { return yscale(d); })
-            .attr("fill", barsets[i].color && barsets[i].color || "grey")
-            .attr("stroke", barsets[i].color && barsets[i].color || "grey")
+            .attr("x", function (d, j) { return binscale(j); })
+            .attr("y", function (d) { return yscale(d); })
+            .attr("fill", ifor(barsets[i].color, "grey"))
+            .attr("stroke", ifor(barsets[i].color, "grey"))
             .attr("width", (xscale(xmax) - xscale(xmin)) / barsets[i].bins.length - 0.1)
-            .attr("height", function(d) { return h - (padding + yscale(d)); })
-            .attr("opacity", barsets[i].opacity && barsets[i].opacity || 1);
+            .attr("height", function (d) { return h - (padding + yscale(d)); })
+            .attr("opacity", ifor(barsets[i].opacity, 1));
     }
 
     // Horizontal and vertical lines
-    vbars.forEach(function(v) {
+    vbars.forEach(function (v) {
                       svg.append("svg:line")
                           .attr("x1", xscale(v.vbar.pos))
                           .attr("y1", yscale(d3.max(dataset)))
@@ -107,7 +117,7 @@ function bars(opt) {
                           .attr("y2", yscale(d3.min(dataset)))
                           .style("stroke", v.vbar.color);
     });
-    hbars.forEach(function(v) {
+    hbars.forEach(function (v) {
                       svg.append("svg:line")
                           .attr("x1", xscale(xmin))
                           .attr("y1", yscale(v.hbar.pos))
@@ -115,7 +125,7 @@ function bars(opt) {
                           .attr("y2", yscale(v.hbar.pos))
                           .style("stroke", v.hbar.color);
     });
-    notes.forEach(function(v) {
+    notes.forEach(function (v) {
                       var X, Y;
                       if(v.note.units === "pixels") {
                           X = v.note.x;
@@ -131,7 +141,7 @@ function bars(opt) {
                           .attr("stroke", v.note.color)
                           .text(v.note.text);
     });
-    lines.forEach(function(v) {
+    lines.forEach(function (v) {
                       svg.append("svg:line")
                           .attr("x1", xscale(v.line.x0))
                           .attr("y1", yscale(v.line.y0))
@@ -146,11 +156,11 @@ function bars(opt) {
 
 function points(opt) {
     // Initial setup
-    var xAxis, yAxis, i,
+    var xAxis, yAxis, i, xx, yy, line, linesets, pointsets,
         padding = 50,
-        allpoints = [].concat.apply([], opt.data.map(function(e) { return e.values; })),
-        xextent = d3.extent(allpoints, function(d) { return d.x }),
-        yextent = d3.extent(allpoints, function(d) { return d.y }),
+        allpoints = [].concat.apply([], opt.data.map(function (e) { return e.values; })),
+        xextent = d3.extent(allpoints, function (d) { return d.x; }),
+        yextent = d3.extent(allpoints, function (d) { return d.y; }),
 
         w = opt.size[0],
         h = opt.size[1],
@@ -186,8 +196,8 @@ function points(opt) {
         .attr("y", h - 10)
         .text(opt.xlabel);
 
-    var yy = 50;
-    var xx = 10;
+    yy = 50;
+    xx = 10;
     svg.append("text")
         .attr("class", "label")
         .attr("text-anchor", "end")
@@ -195,34 +205,33 @@ function points(opt) {
         .attr("y", yy)
         .text(opt.ylabel)
         .attr('transform',
-              function(d,i,j) { return 'rotate(-90 ' + xx + ', ' + yy + ')' });
+              function (d, i, j) { return 'rotate(-90 ' + xx + ', ' + yy + ')'; });
 
     // Actual data points
-    var pointsets = opt.data.filter(function (e) { return e.type === "points"; });
+    pointsets = opt.data.filter(function (e) { return e.type === "points"; });
     for(i=0; i < pointsets.length; i++) {
         svg.append("g").attr("points_" + i);
         svg.selectAll("points_" + i + " circle")
             .data(pointsets[i].values)
             .enter()
             .append("circle")
-            .attr("cx", function(d, i) { return xscale(d.x); })
-            .attr("cy", function(d) { return yscale(d.y); })
-            .attr("r", pointsets[i].size && pointsets[i].size || 4)
-            .attr("fill", pointsets[i].color && pointsets[i].color || "grey");
+            .attr("cx", function (d, i) { return xscale(d.x); })
+            .attr("cy", function (d) { return yscale(d.y); })
+            .attr("r", ifor(pointsets[i].size, 4))
+            .attr("fill", ifor(pointsets[i].color, "grey"));
     }
 
-    var line = d3.svg.line()
-        .x(function(d) { return xscale(d.x); })
-        .y(function(d) { return yscale(d.y); });
+    line = d3.svg.line()
+        .x(function (d) { return xscale(d.x); })
+        .y(function (d) { return yscale(d.y); });
 
-    var linesets = opt.data.filter(function (e) { return e.type === "lines"; });
+    linesets = opt.data.filter(function (e) { return e.type === "lines"; });
     for(i=0; i < linesets.length; i++) {
         svg.append("path")
             .attr("d", line(linesets[i].values))
             .attr("class", "lines_" + i)
             .attr("fill", "none")
-            .attr("stroke", linesets[i].color && linesets[i].color || "grey")
-            .attr("stroke-width", linesets[i].width && linesets[i].width || 1);
-        l = linesets[0];
+            .attr("stroke", ifor(linesets[i].color, "grey"))
+            .attr("stroke-width", ifor(linesets[i].width, 1));
     }
 }
