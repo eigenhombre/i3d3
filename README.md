@@ -19,23 +19,19 @@ JavaScript plotting libraries which might meet our requirements, which are (watc
 
 #### DONE
 
-- Minimal visual noise
-- Histogram / bar graphs based on provided array of bin heights
-    - Display X and Y axes, with labels
-    - Set color, transparency of histogram
-    - Multiple histograms per plot
-    - Show X and Y axis labels
-    - Single or multiple plots per page, of various sizes
-- Scatter / line plots
-    - Multiple data sets per page in different colors/widths
-    - Histograms and scatter / line plots on same diagram
+- High graphical signal/noise ratio
+- Histograms / bar graphs based on provided array of bin heights
+- Set color, transparency of histogram
+- Scatter plots
+- Line graphs
+- Display X and Y axes, with labels
+- Multiple graphs/histograms per plot
+- Add rectangular highlights to X-ranges under plot
+- Draw horizontal, vertical and other lines on top of plots
+- Add text to plot in either data or display units
 
 #### Not done
 
-- Still need to be added to combined plots:
-    - Add rectangular highlights to X-ranges underneath histograms
-    - Draw horizontal, vertical and other lines on top of plot
-    - Add text to plot in either data or display units
 - Show (x,y) plot coordinates of mouse
 - Wrap everything in an object to avoid namespace pollution
 - Log / linear axes
