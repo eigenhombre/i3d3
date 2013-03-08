@@ -19,3 +19,16 @@
 .plot {
     float: left;
 }
+
+div.tooltip {  // Adapted from http://bl.ocks.org/mbostock/1087001
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  height: 12px;
+  padding: 5px;
+  font: 10px sans-serif;
+  background: #ddd;
+  border: solid 1px #aaa;
+  border-radius: 3px;
+  pointer-events: none;
+}

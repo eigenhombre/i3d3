@@ -15,7 +15,8 @@ We looked around at
 [quite](https://code.google.com/p/flot/)
 [a](http://www.jqplot.com/tests/) 
 [few](http://www.highcharts.com/)
-JavaScript plotting libraries which might meet our requirements, which are (watch this space for updated status as the project progresses):
+JavaScript plotting libraries which might meet our requirements, which
+are (watch this space for updated status as the project progresses):
 
 #### DONE
 
@@ -29,15 +30,15 @@ JavaScript plotting libraries which might meet our requirements, which are (watc
 - Add rectangular highlights to X-ranges under plot
 - Draw horizontal, vertical and other lines on top of plots
 - Add text to plot in either data or display units
+- Wrap everything in an object to avoid namespace pollution
 
 #### Not done
 
-- Show (x,y) plot coordinates of mouse
-- Wrap everything in an object to avoid namespace pollution
+- Time series X-axes
 - Log / linear axes
 - Error bars
-- Time series X-axes
 - Show gaps in data
+- Show (x,y) plot coordinates of mouse [?]
 - Zooming / panning
 - Exporting data from plot
 - Exporting plot graphic (either SVG or PDF would be OK)
