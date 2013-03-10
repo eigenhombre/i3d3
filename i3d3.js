@@ -15,16 +15,6 @@ i3d3 = (function(i3d3, window, undefined) {
         return vec.filter(function (x) { return x[key] !== undefined; }); 
     }
 
-    function ifor(a, b) {
-        if (a) { return a; }
-        return b;
-    }
-
-    function ifor(a, b) {
-        if (a) { return a; }
-        return b;
-    }
-
     function concat_contents(l) {
         return [].concat.apply([], l);
     }
@@ -127,11 +117,11 @@ i3d3 = (function(i3d3, window, undefined) {
                 .append("rect")
                 .attr("x", function (d, j) { return xscale(xmin + (xmax-xmin) * j / barsets[i].bins.length);})
                 .attr("y", function (d) { return yscale(d); })
-                .attr("fill", ifor(barsets[i].color, "grey"))
-                .attr("stroke", ifor(barsets[i].color, "grey"))
+                .attr("fill", barsets[i].color || "grey")
+                .attr("stroke", barsets[i].color || "grey")
                 .attr("width", (xscale(xmax) - xscale(xmin)) / barsets[i].bins.length - 0.1)
                 .attr("height", function (d) { return h - (padding + yscale(d)); })
-                .attr("opacity", ifor(barsets[i].opacity, 1));
+                .attr("opacity", barsets[i].opacity || 1);
         }
 
         // Draw point sets
@@ -143,8 +133,8 @@ i3d3 = (function(i3d3, window, undefined) {
                 .append("circle")
                 .attr("cx", function (d, i) { return xscale(d.x); })
                 .attr("cy", function (d) { return yscale(d.y); })
-                .attr("r", ifor(pointsets[i].size, 4))
-                .attr("fill", ifor(pointsets[i].color, "grey"));
+                .attr("r", pointsets[i].size || 4)
+                .attr("fill", pointsets[i].color || "grey");
         }
 
         // Draw line sets
@@ -158,8 +148,8 @@ i3d3 = (function(i3d3, window, undefined) {
                 .attr("d", line(linesets[i].values))
                 .attr("class", "lines_" + i)
                 .attr("fill", "none")
-                .attr("stroke", ifor(linesets[i].color, "grey"))
-                .attr("stroke-width", ifor(linesets[i].width, 1));
+                .attr("stroke", linesets[i].color || "grey")
+                .attr("stroke-width", linesets[i].width || 1);
         }
 
         // Horizontal and vertical lines
@@ -206,7 +196,7 @@ i3d3 = (function(i3d3, window, undefined) {
                               .attr("y", Y)
                               .attr("stroke", v.note.color)
                               .text(v.note.text)
-                              .attr("style", ifor(v.note.style, ""));
+                              .attr("style", v.note.style || "");
         });
 
 

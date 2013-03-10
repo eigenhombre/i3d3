@@ -35,6 +35,7 @@ are (watch this space for updated status as the project progresses):
 #### Not done
 
 - Time series X-axes
+- Optional grids in chart backgrounds
 - Log / linear axes
 - Error bars
 - Show gaps in data
