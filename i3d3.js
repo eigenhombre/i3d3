@@ -199,46 +199,6 @@ i3d3 = (function(i3d3, window, undefined) {
                               .attr("style", v.note.style || "");
         });
 
-
-        /* Tooltip Stuff - doesn't work properly yet, and am not yet sure of the utility of this
-
-        // Put rect to capture plot area for mouseover, etc.
-        svg.append("rect")
-            .attr("x", xscale(xextent[0]))
-            .attr("y", yscale(yextent[1]))
-            .attr("width", xscale(xextent[1]) - xscale(xextent[0]))
-            .attr("height", yscale(yextent[0]) - yscale(yextent[1]))
-            .style("opacity", 1E-6)
-            .on("mouseover", mouseover)
-            .on("mousemove", mousemove)
-            .on("mouseout", mouseout);
-
-        var div = d3.select("body").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 1e-6)
-            .style("position", "absolute");
-
-        function mouseover() {
-            div.transition()
-                .duration(10)
-                .style("opacity", 1);
-        }
-
-        function mousemove() {
-            div
-                .text(xscale.invert(d3.event.pageX).toFixed(2))
-                .style("left", (d3.event.pageX - 50) + "px")
-                .style("top", (d3.event.pageY + 20) + "px");
-        }
-
-        function mouseout() {
-            div.transition()
-                .duration(300)
-                .style("opacity", 1e-6);
-        }
-
-        */
-
         return svg;
     }
     me.plot = doplot;
