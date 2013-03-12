@@ -97,13 +97,13 @@ i3d3 = (function(i3d3, window, undefined) {
         // http://stackoverflow.com/questions/13595175/updating-svg-element-z-index-with-d3
 
         // Rectangular, colored regions of interest
-        regions.map(function (v) {
-                      svg.append("svg:rect")
-                            .attr("x", xscale(v.region.min))
-                            .attr("y", yscale(yextent[1]))
-                            .attr("width", xscale(v.region.max) - xscale(v.region.min))
-                            .attr("height", yscale(yextent[0]) - yscale(yextent[1]))
-                            .attr("fill", v.region.color);
+        regions.forEach(function (v) {
+                            svg.append("svg:rect")
+                                .attr("x", xscale(v.region.min))
+                                .attr("y", yscale(yextent[1]))
+                                .attr("width", xscale(v.region.max) - xscale(v.region.min))
+                                .attr("height", yscale(yextent[0]) - yscale(yextent[1]))
+                                .attr("fill", v.region.color);
         });
 
         // Draw bars
