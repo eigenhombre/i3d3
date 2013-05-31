@@ -32,18 +32,18 @@ are (watch this space for updated status as the project progresses):
 - Add text to plot in either data or display units
 - Wrap everything in an object to avoid namespace pollution
 
-#### Not done
+#### Not done, in order of priority
 
 - Time series X-axes
-- Optional grids in chart backgrounds
-- Log / linear axes
+- Zooming / panning
 - Error bars
 - Show gaps in data
-- Show (x,y) plot coordinates of mouse [?]
-- Zooming / panning
-- Exporting data from plot
 - Exporting plot graphic (either SVG or PDF would be OK)
+- Show (x,y) plot coordinates of mouse [?]
+- Optional grids in chart backgrounds
+- Log / linear axes
 - Ability to “reset” the plot (if, for example, zoomed beyond recognition)
+- Exporting data from plot
 
 None of the canned plotting / graphing packages we looked at were
 quite what we wanted; D3.js does not provide these directly but is
