@@ -35,6 +35,7 @@ are (watch this space for updated status as the project progresses):
 #### Not done, in order of priority
 
 - Time series X-axes
+- Minor (unlabled) gridline for X (or T) axes
 - Zooming / panning
 - Error bars
 - Show gaps in data
