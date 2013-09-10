@@ -3,6 +3,11 @@ i3d3
 
 [D3](http://d3js.org/)-based histogramming and plotting library (for use in [IceCube](http://icecube.wisc.edu) and other projects).  **This is a work in progress**.
 
+### Requirements:
+
+1. [D3](http://d3js.org)
+1. [Underscore.js](http://underscorejs.org)
+
 ### Examples
 
 The following examples were all created from [this HTML](example.html):

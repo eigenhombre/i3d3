@@ -12,36 +12,36 @@ i3d3 = (function(i3d3, window, undefined) {
     var me = {};
 
     function select(vec, key) { 
-        return vec.filter(function (x) { return x[key] !== undefined; }); 
+        return _.filter(vec, function (x) { return !_.isUndefined(x[key]); }); 
     }
 
     function concat_contents(l) {
-        return [].concat.apply([], l);
+        return _.flatten(l, _.shallow);
     }
 
     function combine_values(data) {
-        return concat_contents(data.map(function (e) { return e.values; }));
+        return concat_contents(_.pluck(data, "values"));
     }
 
     function doplot(opt) {
         // Initial setup
         var xAxis, yAxis, i, xx, yy, line, xmin, xmax,
-            pointsets = opt.data.filter(function (e) { return e.type === "points"; }),
-            linesets = opt.data.filter(function (e) { return e.type === "lines"; }),
-            barsets = opt.data.filter(function(e) { return e.type === "bars"; }),
+            pointsets = _.filter(opt.data, function (e) { return e.type === "points"; }),
+            linesets = _.filter(opt.data, function (e) { return e.type === "lines"; }),
+            barsets = _.filter(opt.data, function(e) { return e.type === "bars"; }),
             padding = 50,
             allpoints = combine_values(pointsets.concat(linesets)),//FIXME: handle bins for histos
-            minhistx = Math.min.apply([], barsets.map(function (e) { return e.range[0]; })),
-            maxhistx = Math.max.apply([], barsets.map(function (e) { return e.range[1]; })),
-            maxhisty = Math.max.apply([], barsets.map(function (e) { return d3.max(e.bins); })),
-            minpointsx = Math.min.apply([], allpoints.map(function (d) { return d.x; })),
-            maxpointsx = Math.max.apply([], allpoints.map(function (d) { return d.x; })),
-            minpointsy = Math.min.apply([], allpoints.map(function (d) { return d.y; })),
-            maxpointsy = Math.max.apply([], allpoints.map(function (d) { return d.y; })),
-            xextent = [Math.min(minpointsx, minhistx),
-                       Math.max(maxpointsx, maxhistx)],
-            yextent = [Math.min(0, minpointsy), 
-                       Math.max(maxhisty, maxpointsy)],
+            minhistx = _.min(_.map(barsets, function (e) { return e.range[0]; })),
+            maxhistx = _.max(_.map(barsets, function (e) { return e.range[1]; })),
+            maxhisty = _.max(_.map(barsets, function (e) { return d3.max(e.bins); })),
+            minpointsx = _.min(_.map(allpoints, function (d) { return d.x; })),
+            maxpointsx = _.max(_.map(allpoints, function (d) { return d.x; })),
+            minpointsy = _.min(_.map(allpoints, function (d) { return d.y; })),
+            maxpointsy = _.max(_.map(allpoints, function (d) { return d.y; })),
+            xextent = [_.min([minpointsx, minhistx]),
+                       _.max([maxpointsx, maxhistx])],
+            yextent = [_.min([0, minpointsy]), 
+                       _.max([maxhisty, maxpointsy])],
             w = opt.size[0],
             h = opt.size[1],
             xscale = d3.scale.linear()
@@ -142,7 +142,7 @@ i3d3 = (function(i3d3, window, undefined) {
             .x(function (d) { return xscale(d.x); })
             .y(function (d) { return yscale(d.y); });
 
-        linesets = opt.data.filter(function (e) { return e.type === "lines"; });
+        linesets = _.filter(opt.data, function (e) { return e.type === "lines"; });
         for(i=0; i < linesets.length; i++) {
             svg.append("path")
                 .attr("d", line(linesets[i].values))
@@ -153,7 +153,7 @@ i3d3 = (function(i3d3, window, undefined) {
         }
 
         // Horizontal and vertical lines
-        vbars.forEach(function (v) {
+        _.each(vbars, function (v) {
                           svg.append("svg:line")
                               .attr("x1", xscale(v.vbar.pos))
                               .attr("y1", yscale(yextent[0]))
@@ -162,7 +162,7 @@ i3d3 = (function(i3d3, window, undefined) {
                               .style("stroke", v.vbar.color);
         });
 
-        hbars.forEach(function (v) {
+        _.each(hbars, function (v) {
                           svg.append("svg:line")
                               .attr("x1", xscale(xextent[0]))
                               .attr("y1", yscale(v.hbar.pos))
@@ -171,7 +171,7 @@ i3d3 = (function(i3d3, window, undefined) {
                               .style("stroke", v.hbar.color);
         });
 
-        lines.forEach(function (v) {
+        _.each(lines, function (v) {
                           svg.append("svg:line")
                               .attr("x1", xscale(v.line.x0))
                               .attr("y1", yscale(v.line.y0))
@@ -181,7 +181,7 @@ i3d3 = (function(i3d3, window, undefined) {
         });
 
         // Text annotations
-        notes.forEach(function (v) {
+        _.each(notes, function (v) {
                           var X, Y;
                           if(v.note.units === "pixels") {
                               X = v.note.x;
