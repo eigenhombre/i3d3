@@ -23,6 +23,12 @@ i3d3 = (function(i3d3, window, undefined) {
         return concat_contents(_.pluck(data, "values"));
     }
 
+    function add_time_delta(t0, delta) {
+        var x = new Date();
+        x.setTime(t0.getTime() + delta);
+        return x;                          
+    }
+
     function doplot(opt) {
         // Initial setup
         var xAxis, yAxis, i, xx, yy, line, xmin, xmax,
@@ -34,17 +40,19 @@ i3d3 = (function(i3d3, window, undefined) {
             minhistx = _.min(_.map(barsets, function (e) { return e.range[0]; })),
             maxhistx = _.max(_.map(barsets, function (e) { return e.range[1]; })),
             maxhisty = _.max(_.map(barsets, function (e) { return d3.max(e.bins); })),
-            minpointsx = _.min(_.map(allpoints, function (d) { return d.x; })),
-            maxpointsx = _.max(_.map(allpoints, function (d) { return d.x; })),
-            minpointsy = _.min(_.map(allpoints, function (d) { return d.y; })),
-            maxpointsy = _.max(_.map(allpoints, function (d) { return d.y; })),
-            xextent = [_.min([minpointsx, minhistx]),
-                       _.max([maxpointsx, maxhistx])],
-            yextent = [_.min([0, minpointsy]), 
-                       _.max([maxhisty, maxpointsy])],
+            xs_from_points_and_hists = _.flatten([_.pluck(barsets, "range"),
+                                                  _.pluck(allpoints, "x")]),
+            ys_from_points_and_hists = _.flatten([0, 
+                                                  _.pluck(barsets, "bins"),
+                                                  _.pluck(allpoints, "y")]),
+            xextent = [_.min(xs_from_points_and_hists),
+                       _.max(xs_from_points_and_hists)],
+            yextent = [_.min(ys_from_points_and_hists),
+                       _.max(ys_from_points_and_hists)],
             w = opt.size[0],
             h = opt.size[1],
-            xscale = d3.scale.linear()
+            dotimes = _.every(xextent, _.isDate),
+            xscale = (dotimes ? d3.time.scale : d3.scale.linear)()
               .domain(xextent)
               .range([padding, w - padding]),
             yscale = d3.scale.linear()
@@ -58,6 +66,7 @@ i3d3 = (function(i3d3, window, undefined) {
             svg = d3.select("#" + opt.div).append("svg")
               .attr("width", w)
               .attr("height", h);
+
 
         // Set up axes
         xAxis = d3.svg.axis().scale(xscale).orient("bottom").ticks(5);
@@ -97,7 +106,7 @@ i3d3 = (function(i3d3, window, undefined) {
         // http://stackoverflow.com/questions/13595175/updating-svg-element-z-index-with-d3
 
         // Rectangular, colored regions of interest
-        regions.forEach(function (v) {
+        _.each(regions, function (v) {
                             svg.append("svg:rect")
                                 .attr("x", xscale(v.region.min))
                                 .attr("y", yscale(yextent[1]))
@@ -108,14 +117,22 @@ i3d3 = (function(i3d3, window, undefined) {
 
         // Draw bars
         for(i=0; i < barsets.length; i++) {
-            xmin = barsets[i].range[0],
-            xmax = barsets[i].range[1],
+            xmin = barsets[i].range[0];
+            xmax = barsets[i].range[1];
             svg.append("g").attr("bars_" + i);
             svg.selectAll("bars_" + i + " rect")
                 .data(barsets[i].bins)
                 .enter()
                 .append("rect")
-                .attr("x", function (d, j) { return xscale(xmin + (xmax-xmin) * j / barsets[i].bins.length);})
+                 .attr("x", function (d, j) {
+                      var x;
+                      if(dotimes) {
+                          x = add_time_delta(xmin, (xmax-xmin) * j / barsets[i].bins.length);
+                      } else {
+                          x = xmin + (xmax-xmin) * j / barsets[i].bins.length;
+                      }
+                      return xscale(x);
+                   })
                 .attr("y", function (d) { return yscale(d); })
                 .attr("fill", barsets[i].color || "grey")
                 .attr("stroke", barsets[i].color || "grey")
@@ -202,6 +219,7 @@ i3d3 = (function(i3d3, window, undefined) {
         return svg;
     }
     me.plot = doplot;
+    me.add_time_delta = add_time_delta;
     return me;
 
 }(i3d3, this));

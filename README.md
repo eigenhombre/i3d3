@@ -36,11 +36,12 @@ are (watch this space for updated status as the project progresses):
 - Draw horizontal, vertical and other lines on top of plots
 - Add text to plot in either data or display units
 - Wrap everything in an object to avoid namespace pollution
+- Time series X-axes
 
 #### Not done, in order of priority
 
-- Time series X-axes
 - Minor (unlabled) gridline for X (or T) axes
+- Axis-free representations (sparklines)
 - Zooming / panning
 - Error bars
 - Show gaps in data
