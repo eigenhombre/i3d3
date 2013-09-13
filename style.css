@@ -1,3 +1,7 @@
+body {
+    background-color: whitesmoke;
+}
+
 .axis path, .axis line {
     fill: none;
     stroke: lightgrey;

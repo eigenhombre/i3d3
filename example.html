@@ -30,6 +30,11 @@ function testdata(n, offset) {
         .map(function(x) { return x + (offset && offset || 0) });
 }
 
+function errorbars(n, s) {
+   return _.map(_.range(n), function(i) {
+              return [Math.random() * s, Math.random() * s];
+          });
+}
 
 
 var t0 = new Date("2010-10-10 00:00:00");
@@ -90,9 +95,11 @@ i3d3.plot({data: [{type: "bars",
 
 data = testdata(15);
 i3d3.plot({data: [{type: "bars",
-              bins: data,
-              color: "lightsalmon",
-              range: [500, 1500]}],
+                   bins: data,
+                   errors: errorbars(15, 50),
+                   error_color: "red",
+                   color: "lightsalmon",
+                   range: [500, 1500]}],
            div: "plot5",
            size: [w, h],
            xlabel: "Source Data",
@@ -153,21 +160,23 @@ function tcurve(t0, t1, n, offset, jitter) {
 i3d3.plot({data: [{type: "lines",
                    values: tcurve(new Date("2013-01-10 13:45:00"),
                                   new Date("2013-01-10 13:48:00"),
-                                  50, 100, 50),
+                                  50, 10, 5),
                    color: "blue"},
                   {type: "points",
-                   values: tcurve(new Date("2013-01-10 13:47:00"),
+                   values: tcurve(new Date("2013-01-10 13:48:00"),
                                   new Date("2013-01-10 13:50:00"),
-                                  8, 100, 50),
-                   color: "lightcoral",
+                                  8, 10, 5),
+                   errors: errorbars(8, 4),
+                   color: "lightcoral", 
+                   error_color: "lightcoral", 
                    size: 5},
                   {type: "bars",
-                   bins: testdata(15),
+                   bins: _.map(testdata(15), Math.log),
                    color: "cornflowerblue",
                    range: [new Date("2013-01-10 13:47:00"),
                            new Date("2013-01-10 13:50:00")]},
                   {type: "bars",
-                   bins: testdata(30),
+                   bins: _.map(testdata(30), Math.log),
                    color: "cadetblue",
                    range: [new Date("2013-01-10 13:45:00"),
                            new Date("2013-01-10 13:47:00")]},
@@ -178,11 +187,10 @@ i3d3.plot({data: [{type: "lines",
              ylabel: "Zippos",
              extras: [{vbar: {pos: new Date("2013-01-10 13:46:00"), color: "grey"}},
                       {vbar: {pos: new Date("2013-01-10 13:49:00"), color: "darkolivegreen"}},
-                      {note: {x: w * 0.3, y: h * 0.3,
-                              text: "time-based histograms with curves",
+                      {note: {x: w * 0.25, y: h * 0.75,
+                              text: "time-based histograms with curves and error bars",
                               units: "pixels",
-                              color: "sienna",
-                              style: "font-size: 15;"}}]
+                              style: "font-size: 18; font-style: italic; font-weight: bold; fill: #444;"}}]
 });
 
 
@@ -201,7 +209,7 @@ function exponential_histo(nnoise, pwr_noise, nsignal, pwr_signal) {
     });
 
     var bins = _.map(_.range(30), function(i) {
-        return i3d3.existy(by_rounded[i]) ? by_rounded[i].length : 1;
+        return i3d3.existy(by_rounded[i]) ? by_rounded[i].length : 1; // 1 to handle log scale
     });
 
     return bins;
@@ -211,7 +219,9 @@ var eh = exponential_histo(100000, 500, 100, 5000);
 
 i3d3.plot({data: [{type: "bars",
                    bins: eh,
+                   errors: errorbars(30, 10),
                    color: "darkgray",
+                   error_color: "lightpink",
                    range: [0, eh.length]}],
            div: "plot8",
            yscale: "log",

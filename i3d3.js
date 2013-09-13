@@ -124,26 +124,41 @@ i3d3 = (function(i3d3, window, undefined) {
         for(i=0; i < barsets.length; i++) {
             xmin = barsets[i].range[0];
             xmax = barsets[i].range[1];
+            var x_for_bin = function(xmin, xmax, j) {
+                var x;
+                if(dotimes) {
+                    x = add_time_delta(xmin, (xmax-xmin) * j / barsets[i].bins.length);
+                } else {
+                    x = xmin + (xmax-xmin) * j / barsets[i].bins.length;
+                }
+                return xscale(x);                
+            };
             svg.append("g").attr("bars_" + i);
             svg.selectAll("bars_" + i + " rect")
                 .data(barsets[i].bins)
                 .enter()
                 .append("rect")
-                 .attr("x", function (d, j) {
-                      var x;
-                      if(dotimes) {
-                          x = add_time_delta(xmin, (xmax-xmin) * j / barsets[i].bins.length);
-                      } else {
-                          x = xmin + (xmax-xmin) * j / barsets[i].bins.length;
-                      }
-                      return xscale(x);
-                   })
+                .attr("x", function (d, j) { return x_for_bin(xmin, xmax, j); })
                 .attr("y", function (d) { return yscale(d); })
                 .attr("fill", barsets[i].color || "grey")
                 .attr("stroke", barsets[i].color || "grey")
                 .attr("width", (xscale(xmax) - xscale(xmin)) / barsets[i].bins.length - 0.1)
                 .attr("height", function (d) { return h - (padding + yscale(d)); })
                 .attr("opacity", barsets[i].opacity || 1);
+            if (barsets[i].errors) {
+                svg.selectAll("bars_errors_" + i + " path")
+                    .data(barsets[i].errors)
+                    .enter()
+                    .append("line")
+                    .attr("x1", function(d, j) { return x_for_bin(xmin, xmax, j + 0.5); })
+                    .attr("x2", function(d, j) { return x_for_bin(xmin, xmax, j + 0.5); })
+                    .attr("y1", function(d, j) { 
+                              return yscale(Math.max(do_y_log ? 1 : 0, 
+                                                     barsets[i].bins[j] - d[0])); 
+                     })
+                    .attr("y2", function(d, j) { return yscale(barsets[i].bins[j] + d[1]); })
+                    .style("stroke", barsets[i].error_color || "grey");
+            }
         }
 
         // Draw point sets
@@ -157,6 +172,21 @@ i3d3 = (function(i3d3, window, undefined) {
                 .attr("cy", function (d) { return yscale(d.y); })
                 .attr("r", pointsets[i].size || 4)
                 .attr("fill", pointsets[i].color || "grey");
+            if (pointsets[i].errors) {
+                svg.selectAll("points_errors_" + i + " path")
+                    .data(pointsets[i].errors)
+                    .enter()
+                    .append("line")
+                    .attr("x1", function(d, j) { return xscale(pointsets[i].values[j].x); })
+                    .attr("x2", function(d, j) { return xscale(pointsets[i].values[j].x); })
+                    .attr("y1", function(d, j) { 
+                              return yscale(Math.max(do_y_log ? 1 : 0, 
+                                                     pointsets[i].values[j].y - d[0])); 
+                     })
+                    .attr("y2", function(d, j) { return yscale(pointsets[i].values[j].y + d[1]); })
+                    .style("stroke", pointsets[i].error_color || "grey");
+                       
+            }
         }
 
         // Draw line sets

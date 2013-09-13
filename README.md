@@ -14,6 +14,8 @@ The following examples were all created from [this HTML](example.html):
 
 ![Example output](example.png "Example output")
 
+The HTML is pretty self-explanatory and serves as API documentation for the time being :-).
+
 ### Background
 
 We looked around at 
@@ -38,13 +40,13 @@ are (watch this space for updated status as the project progresses):
 - Wrap everything in an object to avoid namespace pollution
 - Time series X-axes
 - Log / linear y-axes
+- Two-sided error bars for points and histograms
 
 #### Not done, in order of priority
 
 - Minor (unlabled) gridline for X (or T) axes
 - Axis-free representations (sparklines)
 - Zooming / panning
-- Error bars
 - Exporting plot graphic (either SVG or PDF would be OK)
 - Show (x,y) plot coordinates of mouse [?]
 - Optional grids in chart backgrounds
