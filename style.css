@@ -11,7 +11,8 @@
     font-size: 11px;
 }
 .label {
-    font-size: 13px;
+    font-size: 12px;
+    fill: #333;
 }
 .note {
     font-size: 12px;

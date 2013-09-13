@@ -91,6 +91,7 @@ i3d3 = (function(i3d3, window, undefined) {
             .attr("text-anchor", "end")
             .attr("x", w - padding + 5)
             .attr("y", h - 10)
+            .attr("style", opt.label_style || "")
             .text(opt.xlabel);
 
         yy = 50;
@@ -101,6 +102,7 @@ i3d3 = (function(i3d3, window, undefined) {
             .attr("x", xx)
             .attr("y", yy)
             .text(opt.ylabel)
+            .attr("style", opt.label_style || "")
             .attr('transform',
                   function (d, i, j) { return 'rotate(-90 ' + xx + ', ' + yy + ')'; });
 
