@@ -13,7 +13,8 @@
 <div class="plot" id="plot4"></div>
 <div class="plot" id="plot5"></div>
 <div class="plot" id="plot6"></div> 
-<div class="plot" id="plot7"></div> 
+<div class="plot" id="plot7"></div>  
+<div class="plot" id="plot8"></div>  
 
 <script src="i3d3.js" type="text/javascript"></script>
 
@@ -182,6 +183,41 @@ i3d3.plot({data: [{type: "lines",
                               color: "sienna",
                               style: "font-size: 15;"}}]
 });
+
+
+function expo_points(npoints, slope) {
+    return _.map(_.range(npoints), function(i) {
+        return -Math.log(Math.random()) * slope;
+    });
+}
+
+function exponential_histo(nnoise, pwr_noise, nsignal, pwr_signal) {
+    var xnoise = expo_points(nnoise, pwr_noise); 
+    var xsignal = expo_points(nsignal, pwr_signal);
+
+    var by_rounded = _.groupBy(xnoise.concat(xsignal), function(x) {
+        return Math.floor(x/500);
+    });
+
+    var bins = _.map(_.range(30), function(i) {
+        return i3d3.existy(by_rounded[i]) ? by_rounded[i].length : 1;
+    });
+
+    return bins;
+}
+
+var eh = exponential_histo(100000, 500, 100, 5000);
+
+i3d3.plot({data: [{type: "bars",
+                   bins: eh,
+                   color: "darkgray",
+                   range: [0, eh.length]}],
+           div: "plot8",
+           yscale: "log",
+           size: [w, h],
+           xlabel: "bin",
+           ylabel: "Events",
+           extras: [{vbar: {pos: 12, color: "red"}}]});
 
 </script>
 </body>

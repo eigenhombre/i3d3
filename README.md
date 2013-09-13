@@ -37,6 +37,7 @@ are (watch this space for updated status as the project progresses):
 - Add text to plot in either data or display units
 - Wrap everything in an object to avoid namespace pollution
 - Time series X-axes
+- Log / linear y-axes
 
 #### Not done, in order of priority
 
@@ -44,11 +45,9 @@ are (watch this space for updated status as the project progresses):
 - Axis-free representations (sparklines)
 - Zooming / panning
 - Error bars
-- Show gaps in data
 - Exporting plot graphic (either SVG or PDF would be OK)
 - Show (x,y) plot coordinates of mouse [?]
 - Optional grids in chart backgrounds
-- Log / linear axes
 - Ability to “reset” the plot (if, for example, zoomed beyond recognition)
 - Exporting data from plot
 

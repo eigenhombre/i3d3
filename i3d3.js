@@ -29,13 +29,15 @@ i3d3 = (function(i3d3, window, undefined) {
         return x;                          
     }
 
+    function existy(x) { return x != null; };   // Michael Fogus, "Functional JavaScript"
+
     function doplot(opt) {
         // Initial setup
         var xAxis, yAxis, i, xx, yy, line, xmin, xmax,
             pointsets = _.filter(opt.data, function (e) { return e.type === "points"; }),
             linesets = _.filter(opt.data, function (e) { return e.type === "lines"; }),
             barsets = _.filter(opt.data, function(e) { return e.type === "bars"; }),
-            padding = 50,
+            padding = existy(opt.padding) && opt.padding || 50,
             allpoints = combine_values(pointsets.concat(linesets)),//FIXME: handle bins for histos
             minhistx = _.min(_.map(barsets, function (e) { return e.range[0]; })),
             maxhistx = _.max(_.map(barsets, function (e) { return e.range[1]; })),
@@ -45,17 +47,18 @@ i3d3 = (function(i3d3, window, undefined) {
             ys_from_points_and_hists = _.flatten([0, 
                                                   _.pluck(barsets, "bins"),
                                                   _.pluck(allpoints, "y")]),
+            do_y_log = opt.yscale == "log",
+            yextent = [do_y_log ? 1 : _.min(ys_from_points_and_hists),
+                       _.max(ys_from_points_and_hists)],
             xextent = [_.min(xs_from_points_and_hists),
                        _.max(xs_from_points_and_hists)],
-            yextent = [_.min(ys_from_points_and_hists),
-                       _.max(ys_from_points_and_hists)],
             w = opt.size[0],
             h = opt.size[1],
             dotimes = _.every(xextent, _.isDate),
             xscale = (dotimes ? d3.time.scale : d3.scale.linear)()
               .domain(xextent)
               .range([padding, w - padding]),
-            yscale = d3.scale.linear()
+            yscale = (do_y_log ? d3.scale.log : d3.scale.linear)()
               .domain(yextent)
               .range([h - padding, padding]),
             vbars = select(opt.extras, "vbar"),
@@ -220,6 +223,7 @@ i3d3 = (function(i3d3, window, undefined) {
     }
     me.plot = doplot;
     me.add_time_delta = add_time_delta;
+    me.existy = existy; // FIXME: put this somewhere else?
     return me;
 
 }(i3d3, this));
