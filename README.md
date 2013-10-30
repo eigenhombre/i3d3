@@ -1,7 +1,9 @@
 i3d3
 ====
 
-[D3](http://d3js.org/)-based histogramming and plotting library (for use in [IceCube](http://icecube.wisc.edu) and other projects).  **This is a work in progress**.
+[D3](http://d3js.org/)-based histogramming and plotting library (for
+use in [IceCube](http://icecube.wisc.edu) and other projects). **This
+is a work in progress**.
 
 ### Requirements:
 
@@ -16,6 +18,10 @@ The following examples were all created from [this HTML](example.html):
 
 The HTML is pretty self-explanatory and serves as API documentation
 for the time being :-).
+
+*NOTE*: you must use or adapt the styling rules in
+ [`style.css`](style.css) or your graphs will look hideously ugly.
+ Again, [`example.html`](example.html) shows one way to do it.
 
 ### Background
 
