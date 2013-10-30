@@ -74,7 +74,12 @@ i3d3 = (function(i3d3, window, undefined) {
               .attr("height", h);
 
         // Set up axes
-        xAxis = d3.svg.axis().scale(xscale).orient("bottom").ticks(5);
+        xAxis = d3.svg.axis()
+                      .scale(xscale)
+                      .orient("bottom")
+                      .ticks(5)
+                      .tickFormat(dotimes ? d3.time.format("%H:%M") : undefined);
+
         svg.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(0," + (h - padding_bottom) + ")")
