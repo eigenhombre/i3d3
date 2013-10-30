@@ -40,7 +40,7 @@ i3d3 = (function(i3d3, window, undefined) {
             padding_left = existy(opt.padding_left) && opt.padding_left || 50,
             padding_right = existy(opt.padding_right) && opt.padding_right || 8,
             padding_bottom = existy(opt.padding_bottom) && opt.padding_bottom || 50,
-            padding_top = 8,
+            padding_top = existy(opt.padding_top) && opt.padding_top || 8,
             allpoints = combine_values(pointsets.concat(linesets)),//FIXME: handle bins for histos
             minhistx = _.min(_.map(barsets, function (e) { return e.range[0]; })),
             maxhistx = _.max(_.map(barsets, function (e) { return e.range[1]; })),
@@ -257,6 +257,14 @@ i3d3 = (function(i3d3, window, undefined) {
                               .text(v.note.text)
                               .attr("style", v.note.style || "");
         });
+
+        if(opt.title) {
+            svg.append("text")
+                .attr("class", "title")
+                .attr("x", w/2)
+                .attr("y", padding_top - 10)
+                .text(opt.title);            
+        }
 
         return svg;
     }
