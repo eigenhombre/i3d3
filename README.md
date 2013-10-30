@@ -14,7 +14,8 @@ The following examples were all created from [this HTML](example.html):
 
 ![Example output](example.png "Example output")
 
-The HTML is pretty self-explanatory and serves as API documentation for the time being :-).
+The HTML is pretty self-explanatory and serves as API documentation
+for the time being :-).
 
 ### Background
 

@@ -37,7 +37,10 @@ i3d3 = (function(i3d3, window, undefined) {
             pointsets = _.filter(opt.data, function (e) { return e.type === "points"; }),
             linesets = _.filter(opt.data, function (e) { return e.type === "lines"; }),
             barsets = _.filter(opt.data, function(e) { return e.type === "bars"; }),
-            padding = existy(opt.padding) && opt.padding || 50,
+            padding_left = existy(opt.padding_left) && opt.padding_left || 50,
+            padding_right = existy(opt.padding_right) && opt.padding_right || 8,
+            padding_bottom = existy(opt.padding_bottom) && opt.padding_bottom || 50,
+            padding_top = 8,
             allpoints = combine_values(pointsets.concat(linesets)),//FIXME: handle bins for histos
             minhistx = _.min(_.map(barsets, function (e) { return e.range[0]; })),
             maxhistx = _.max(_.map(barsets, function (e) { return e.range[1]; })),
@@ -57,10 +60,10 @@ i3d3 = (function(i3d3, window, undefined) {
             dotimes = _.every(xextent, _.isDate),
             xscale = (dotimes ? d3.time.scale : d3.scale.linear)()
               .domain(xextent)
-              .range([padding, w - padding]),
+              .range([padding_left, w - padding_right]),
             yscale = (do_y_log ? d3.scale.log : d3.scale.linear)()
               .domain(yextent)
-              .range([h - padding, padding]),
+              .range([h - padding_bottom, padding_top]),
             vbars = select(opt.extras, "vbar"),
             hbars = select(opt.extras, "hbar"),
             regions = select(opt.extras, "region"),
@@ -70,26 +73,25 @@ i3d3 = (function(i3d3, window, undefined) {
               .attr("width", w)
               .attr("height", h);
 
-
         // Set up axes
         xAxis = d3.svg.axis().scale(xscale).orient("bottom").ticks(5);
         svg.append("g")
             .attr("class", "axis")
-            .attr("transform", "translate(0," + (h - padding) + ")")
+            .attr("transform", "translate(0," + (h - padding_bottom) + ")")
             .call(xAxis);
 
         yAxis = d3.svg.axis().scale(yscale).orient("left").ticks(3);
-
-        // Set up axis labels
         svg.append("g")
             .attr("class", "axis")
-            .attr("transform", "translate(" + padding + ",0)")
+            .attr("transform", "translate(" + padding_left + ",0)")
             .call(yAxis);
+
+        // Set up axis labels
 
         svg.append("text")
             .attr("class", "label")
             .attr("text-anchor", "end")
-            .attr("x", w - padding + 5)
+            .attr("x", w - padding_right + 5)
             .attr("y", h - 10)
             .attr("style", opt.label_style || "")
             .text(opt.xlabel);
@@ -143,7 +145,7 @@ i3d3 = (function(i3d3, window, undefined) {
                 .attr("fill", barsets[i].color || "grey")
                 .attr("stroke", barsets[i].color || "grey")
                 .attr("width", (xscale(xmax) - xscale(xmin)) / barsets[i].bins.length - 0.1)
-                .attr("height", function (d) { return h - (padding + yscale(d)); })
+                .attr("height", function (d) { return h - (padding_bottom + yscale(d)); })
                 .attr("opacity", barsets[i].opacity || 1);
             if (barsets[i].errors) {
                 svg.selectAll("bars_errors_" + i + " path")
