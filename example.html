@@ -30,19 +30,25 @@ function testdata(n, offset) {
         .map(function(x) { return x + (offset && offset || 0) });
 }
 
-function errorbars(n, s) {
+
+functionerrorbars(n, s) {
    return _.map(_.range(n), function(i) {
               return [Math.random() * s, Math.random() * s];
           });
 }
 
 
-var t0 = new Date("2010-10-10 00:00:00");
-var t1 = new Date("2010-10-10 12:00:00");
+function makedate(s) {
+   return new Date(s.replace(/-/g, '/'));
+}
 
-var r0 = new Date("2010-10-10 06:00:00");  
-var r1 = new Date("2010-10-10 08:00:00"); 
-var tv = new Date("2010-10-10 07:00:00"); 
+
+var t0 = makedate("2010-10-10 00:00:00");
+var t1 = makedate("2010-10-10 12:00:00");
+
+var r0 = makedate("2010-10-10 06:00:00");  
+var r1 = makedate("2010-10-10 08:00:00"); 
+var tv = makedate("2010-10-10 07:00:00"); 
 
 var data = testdata(60, 200);
 
@@ -163,13 +169,13 @@ function tcurve(t0, t1, n, offset, jitter) {
 }
 
 i3d3.plot({data: [{type: "lines",
-                   values: tcurve(new Date("2013-01-10 13:45:00"),
-                                  new Date("2013-01-10 13:48:00"),
+                   values: tcurve(makedate("2013-01-10 13:45:00"),
+                                  makedate("2013-01-10 13:48:00"),
                                   50, 10, 5),
                    color: "blue"},
                   {type: "points",
-                   values: tcurve(new Date("2013-01-10 13:48:00"),
-                                  new Date("2013-01-10 13:50:00"),
+                   values: tcurve(makedate("2013-01-10 13:48:00"),
+                                  makedate("2013-01-10 13:50:00"),
                                   8, 10, 5),
                    errors: errorbars(8, 4),
                    color: "lightcoral", 
@@ -178,21 +184,21 @@ i3d3.plot({data: [{type: "lines",
                   {type: "bars",
                    bins: _.map(testdata(15), Math.log),
                    color: "cornflowerblue",
-                   range: [new Date("2013-01-10 13:47:00"),
-                           new Date("2013-01-10 13:50:00")]},
+                   range: [makedate("2013-01-10 13:47:00"),
+                           makedate("2013-01-10 13:50:00")]},
                   {type: "bars",
                    bins: _.map(testdata(30), Math.log),
                    color: "cadetblue",
-                   range: [new Date("2013-01-10 13:45:00"),
-                           new Date("2013-01-10 13:47:00")]},
+                   range: [makedate("2013-01-10 13:45:00"),
+                           makedate("2013-01-10 13:47:00")]},
                   ],
              div: "plot7",
              size: [w * 2, h],
              padding_right: 50, 
              xlabel: "t",
              ylabel: "Zippos",
-             extras: [{vbar: {pos: new Date("2013-01-10 13:46:00"), color: "grey"}},
-                      {vbar: {pos: new Date("2013-01-10 13:49:00"), color: "darkolivegreen"}},
+             extras: [{vbar: {pos: makedate("2013-01-10 13:46:00"), color: "grey"}},
+                      {vbar: {pos: makedate("2013-01-10 13:49:00"), color: "darkolivegreen"}},
                       {note: {x: w * 0.25, y: h * 0.75,
                               text: "time-based histograms with curves and error bars",
                               units: "pixels",
