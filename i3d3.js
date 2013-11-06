@@ -171,14 +171,6 @@ i3d3 = (function(i3d3, window, undefined) {
         // Draw point sets
         for(i=0; i < pointsets.length; i++) {
             svg.append("g").attr("points_" + i);
-            svg.selectAll("points_" + i + " circle")
-                .data(pointsets[i].values)
-                .enter()
-                .append("circle")
-                .attr("cx", function (d, i) { return xscale(d.x); })
-                .attr("cy", function (d) { return yscale(d.y); })
-                .attr("r", pointsets[i].size || 4)
-                .attr("fill", pointsets[i].color || "grey");
             if (pointsets[i].errors) {
                 svg.selectAll("points_errors_" + i + " path")
                     .data(pointsets[i].errors)
@@ -194,6 +186,14 @@ i3d3 = (function(i3d3, window, undefined) {
                     .style("stroke", pointsets[i].error_color || "grey");
                        
             }
+            svg.selectAll("points_" + i + " circle")
+                .data(pointsets[i].values)
+                .enter()
+                .append("circle")
+                .attr("cx", function (d, i) { return xscale(d.x); })
+                .attr("cy", function (d) { return yscale(d.y); })
+                .attr("r", pointsets[i].size || 4)
+                .attr("fill", pointsets[i].color || "grey");
         }
 
         // Draw line sets
@@ -203,12 +203,6 @@ i3d3 = (function(i3d3, window, undefined) {
 
         linesets = _.filter(opt.data, function (e) { return e.type === "lines"; });
         for(i=0; i < linesets.length; i++) {
-            svg.append("path")
-                .attr("d", line(linesets[i].values))
-                .attr("class", "lines_" + i)
-                .attr("fill", "none")
-                .attr("stroke", linesets[i].color || "grey")
-                .attr("stroke-width", linesets[i].width || 1);
             if (linesets[i].errors) {
                 svg.selectAll("lines_errors_" + i + " path")
                     .data(linesets[i].errors)
@@ -223,6 +217,12 @@ i3d3 = (function(i3d3, window, undefined) {
                     .attr("y2", function(d, j) { return yscale(linesets[i].values[j].y + d[1]); })
                     .style("stroke", linesets[i].error_color || "grey");
             }
+            svg.append("path")
+                .attr("d", line(linesets[i].values))
+                .attr("class", "lines_" + i)
+                .attr("fill", "none")
+                .attr("stroke", linesets[i].color || "grey")
+                .attr("stroke-width", linesets[i].width || 1);
         }
 
         // Horizontal and vertical lines

@@ -37,6 +37,15 @@ function errorbars(n, s) {
 }
 
 
+function sample_curve(ampl, phase, noise_weight, offset, sig2) {
+    return _.map(_.range(50), function(i) { 
+         var x = 0.1 * i; 
+         return {x: x, y: ampl * (Math.exp(-(Math.pow(x - phase, 2)/sig2)) +  
+                                  Math.random()/noise_weight + offset)}; 
+     });
+}
+
+
 function makedate(s) {
    return new Date(s.replace(/-/g, '/'));
 }
@@ -76,14 +85,11 @@ i3d3.plot({data: [{type: "bars",
                    color: "lightgrey",
                    range: [2000, 4000]},
                   {type: "lines",
-                   values: [{x: 2550, y: 200},
-                            {x: 2700, y: 240},  
-                            {x: 2850, y: 260},  
-                            {x: 3000, y: 280}, 
-                            {x: 3200, y: 300}],
-                   errors: errorbars(5, 50),
-                   error_color: "purple",
-                   color: "purple"}],
+                   width: 4,
+                   values: [{x: 2200, y: 100}, {x: 3000, y: 180}, {x: 3800, y: 200}],
+                   errors: _.map(_.range(3), function() { return [20, 20] }),
+                   error_color: "black",
+                   color: "thistle"}],
            div: "plot3",
            size: [w, h],
            padding_right: 50, 
@@ -129,15 +135,6 @@ i3d3.plot({data: [{type: "bars",
                             color: "darkolivegreen", units: "pixels"}}],
 
 });
-
-
-function sample_curve(ampl, phase, noise_weight, offset, sig2) {
-    return _.map(_.range(50), function(i) { 
-         var x = 0.1 * i; 
-         return {x: x, y: ampl * (Math.exp(-(Math.pow(x - phase, 2)/sig2)) +  
-                                  Math.random()/noise_weight + offset)}; 
-     });
-}
 
 
 i3d3.plot({data: [{type: "lines",
@@ -187,7 +184,7 @@ i3d3.plot({data: [{type: "lines",
                                   8, 10, 5),
                    errors: errorbars(8, 4),
                    color: "lightcoral", 
-                   error_color: "lightcoral", 
+                   error_color: "black",
                    size: 5},
                   {type: "bars",
                    bins: _.map(testdata(15), Math.log),
