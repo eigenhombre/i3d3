@@ -48,6 +48,7 @@ are (watch this space for updated status as the project progresses):
 - Time series X-axes
 - Log / linear y-axes
 - Two-sided error bars for points and histograms
+- Allow addition of titles to plots
 
 #### Not done, in order of priority
 
