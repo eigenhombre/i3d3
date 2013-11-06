@@ -16,7 +16,7 @@
 <div class="plot" id="plot7"></div>  
 <div class="plot" id="plot8"></div>  
 
-<script src="i3d3.js" type="text/javascript"></script>
+<script src="i3d3.js" type="text/javascript"></script> 
 
 <script>
 
@@ -25,9 +25,8 @@ var h = 250,
 
 
 function testdata(n, offset) {
-    return d3.range(n)
-        .map(d3.random.logNormal(Math.log(30)))
-        .map(function(x) { return x + (offset && offset || 0) });
+    return _.map(_.range(n), _.compose(function(x) { return x + (offset && offset || 0) },
+                                       d3.random.logNormal(Math.log(30))));
 }
 
 
@@ -75,7 +74,16 @@ i3d3.plot({data: [{type: "bars",
 i3d3.plot({data: [{type: "bars",
                    bins: testdata(330),
                    color: "lightgrey",
-                   range: [2000, 4000]}],
+                   range: [2000, 4000]},
+                  {type: "lines",
+                   values: [{x: 2550, y: 200},
+                            {x: 2700, y: 240},  
+                            {x: 2850, y: 260},  
+                            {x: 3000, y: 280}, 
+                            {x: 3200, y: 300}],
+                   errors: errorbars(5, 50),
+                   error_color: "purple",
+                   color: "purple"}],
            div: "plot3",
            size: [w, h],
            padding_right: 50, 
@@ -124,12 +132,13 @@ i3d3.plot({data: [{type: "bars",
 
 
 function sample_curve(ampl, phase, noise_weight, offset, sig2) {
-    return d3.range(50).map(function(i) { 
+    return _.map(_.range(50), function(i) { 
          var x = 0.1 * i; 
          return {x: x, y: ampl * (Math.exp(-(Math.pow(x - phase, 2)/sig2)) +  
                                   Math.random()/noise_weight + offset)}; 
-     }); 
+     });
 }
+
 
 i3d3.plot({data: [{type: "lines",
                    values: sample_curve(200, 2, 10, 0.1, 0.4),
@@ -145,8 +154,7 @@ i3d3.plot({data: [{type: "lines",
                   {type: "bars",
                    bins: testdata(30),
                    color: "goldenrod",
-                   range: [2, 8]},
-                  ],
+                   range: [2, 8]}],
              div: "plot6",
              size: [w * 2, h],
              padding_right: 50, 

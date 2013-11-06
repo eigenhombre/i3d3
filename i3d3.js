@@ -210,7 +210,7 @@ i3d3 = (function(i3d3, window, undefined) {
                 .attr("stroke", linesets[i].color || "grey")
                 .attr("stroke-width", linesets[i].width || 1);
             if (linesets[i].errors) {
-                svg.selectAll("points_errors_" + i + " path")
+                svg.selectAll("lines_errors_" + i + " path")
                     .data(linesets[i].errors)
                     .enter()
                     .append("line")
