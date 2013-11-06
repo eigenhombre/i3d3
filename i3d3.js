@@ -209,6 +209,20 @@ i3d3 = (function(i3d3, window, undefined) {
                 .attr("fill", "none")
                 .attr("stroke", linesets[i].color || "grey")
                 .attr("stroke-width", linesets[i].width || 1);
+            if (linesets[i].errors) {
+                svg.selectAll("points_errors_" + i + " path")
+                    .data(linesets[i].errors)
+                    .enter()
+                    .append("line")
+                    .attr("x1", function(d, j) { return xscale(linesets[i].values[j].x); })
+                    .attr("x2", function(d, j) { return xscale(linesets[i].values[j].x); })
+                    .attr("y1", function(d, j) { 
+                              return yscale(Math.max(do_y_log ? 1 : 0, 
+                                                     linesets[i].values[j].y - d[0])); 
+                     })
+                    .attr("y2", function(d, j) { return yscale(linesets[i].values[j].y + d[1]); })
+                    .style("stroke", linesets[i].error_color || "grey");
+            }
         }
 
         // Horizontal and vertical lines
