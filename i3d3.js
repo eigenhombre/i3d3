@@ -33,7 +33,7 @@ i3d3 = (function(i3d3, window, undefined) {
 
     function doplot(opt) {
         // Initial setup
-        var xAxis, yAxis, i, xx, yy, line, xmin, xmax,
+        var xAxis, yAxis, i, xx, yy, line, xmin, xmax, zoom,
             pointsets = _.filter(opt.data, function (e) { return e.type === "points"; }),
             linesets = _.filter(opt.data, function (e) { return e.type === "lines"; }),
             barsets = _.filter(opt.data, function(e) { return e.type === "bars"; }),
@@ -73,6 +73,16 @@ i3d3 = (function(i3d3, window, undefined) {
               .attr("width", w)
               .attr("height", h);
 
+        var x_for_bin = function(nbins, xmin, xmax, j) {
+            var x;
+            if(dotimes) {
+                x = add_time_delta(xmin, (xmax-xmin) * j / nbins);
+            } else {
+                x = xmin + (xmax-xmin) * j / nbins;
+            }
+            return xscale(x);                
+        };
+
         // Set up axes
         xAxis = d3.svg.axis()
                       .scale(xscale)
@@ -80,14 +90,18 @@ i3d3 = (function(i3d3, window, undefined) {
                       .ticks(5)
                       .tickFormat(dotimes ? d3.time.format("%H:%M") : undefined);
 
+        yAxis = d3.svg.axis()
+                      .scale(yscale)
+                      .orient("left")
+                      .ticks(3);
+
         svg.append("g")
-            .attr("class", "axis")
+            .attr("class", "x axis")
             .attr("transform", "translate(0," + (h - padding_bottom) + ")")
             .call(xAxis);
 
-        yAxis = d3.svg.axis().scale(yscale).orient("left").ticks(3);
         svg.append("g")
-            .attr("class", "axis")
+            .attr("class", "y axis")
             .attr("transform", "translate(" + padding_left + ",0)")
             .call(yAxis);
 
@@ -114,152 +128,91 @@ i3d3 = (function(i3d3, window, undefined) {
                   function (d, i, j) { return 'rotate(-90 ' + xx + ', ' + yy + ')'; });
 
 
-        // Content of plots, in order of z-height. See
-        // http://stackoverflow.com/questions/13595175/updating-svg-element-z-index-with-d3
-
-        // Rectangular, colored regions of interest
-        _.each(regions, function (v) {
-                            svg.append("svg:rect")
-                                .attr("x", xscale(v.region.min))
-                                .attr("y", yscale(yextent[1]))
-                                .attr("width", xscale(v.region.max) - xscale(v.region.min))
-                                .attr("height", yscale(yextent[0]) - yscale(yextent[1]))
-                                .attr("fill", v.region.color);
-        });
-
-        // Draw bars
-        for(i=0; i < barsets.length; i++) {
-            xmin = barsets[i].range[0];
-            xmax = barsets[i].range[1];
-            var x_for_bin = function(xmin, xmax, j) {
-                var x;
-                if(dotimes) {
-                    x = add_time_delta(xmin, (xmax-xmin) * j / barsets[i].bins.length);
-                } else {
-                    x = xmin + (xmax-xmin) * j / barsets[i].bins.length;
-                }
-                return xscale(x);                
-            };
-            svg.append("g").attr("bars_" + i);
-            svg.selectAll("bars_" + i + " rect")
-                .data(barsets[i].bins)
-                .enter()
-                .append("rect")
-                .attr("x", function (d, j) { return x_for_bin(xmin, xmax, j); })
-                .attr("y", function (d) { return yscale(d); })
-                .attr("fill", barsets[i].color || "grey")
-                .attr("stroke", barsets[i].color || "grey")
-                .attr("width", (xscale(xmax) - xscale(xmin)) / barsets[i].bins.length - 0.1)
-                .attr("height", function (d) { return h - (padding_bottom + yscale(d)); })
-                .attr("opacity", barsets[i].opacity || 1);
-            if (barsets[i].errors) {
-                svg.selectAll("bars_errors_" + i + " path")
-                    .data(barsets[i].errors)
-                    .enter()
-                    .append("line")
-                    .attr("x1", function(d, j) { return x_for_bin(xmin, xmax, j + 0.5); })
-                    .attr("x2", function(d, j) { return x_for_bin(xmin, xmax, j + 0.5); })
-                    .attr("y1", function(d, j) { 
-                              return yscale(Math.max(do_y_log ? 1 : 0, 
-                                                     barsets[i].bins[j] - d[0])); 
-                     })
-                    .attr("y2", function(d, j) { return yscale(barsets[i].bins[j] + d[1]); })
-                    .style("stroke", barsets[i].error_color || "grey");
-            }
+        if(opt.title) {
+            svg.append("text")
+                .attr("class", "title")
+                .attr("x", w/2)
+                .attr("y", padding_top - 10)
+                .text(opt.title);
         }
 
-        // Draw point sets
-        for(i=0; i < pointsets.length; i++) {
-            svg.append("g").attr("points_" + i);
-            if (pointsets[i].errors) {
-                svg.selectAll("points_errors_" + i + " path")
-                    .data(pointsets[i].errors)
-                    .enter()
-                    .append("line")
-                    .attr("x1", function(d, j) { return xscale(pointsets[i].values[j].x); })
-                    .attr("x2", function(d, j) { return xscale(pointsets[i].values[j].x); })
-                    .attr("y1", function(d, j) { 
-                              return yscale(Math.max(do_y_log ? 1 : 0, 
-                                                     pointsets[i].values[j].y - d[0])); 
-                     })
-                    .attr("y2", function(d, j) { return yscale(pointsets[i].values[j].y + d[1]); })
-                    .style("stroke", pointsets[i].error_color || "grey");
-                       
-            }
-            svg.selectAll("points_" + i + " circle")
-                .data(pointsets[i].values)
-                .enter()
-                .append("circle")
-                .attr("cx", function (d, i) { return xscale(d.x); })
-                .attr("cy", function (d) { return yscale(d.y); })
-                .attr("r", pointsets[i].size || 4)
-                .attr("fill", pointsets[i].color || "grey");
-        }
+        var clip = svg.append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("x", padding_left)
+            .attr("y", padding_top)
+            .attr("width", w - (padding_left + padding_right))
+            .attr("height", h - (padding_top + padding_bottom));
 
-        // Draw line sets
-        line = d3.svg.line()
-            .x(function (d) { return xscale(d.x); })
-            .y(function (d) { return yscale(d.y); });
+        var chartBody = svg.append("g").attr("clip-path", "url(#clip)");
 
-        linesets = _.filter(opt.data, function (e) { return e.type === "lines"; });
-        for(i=0; i < linesets.length; i++) {
-            if (linesets[i].errors) {
-                svg.selectAll("lines_errors_" + i + " path")
-                    .data(linesets[i].errors)
-                    .enter()
-                    .append("line")
-                    .attr("x1", function(d, j) { return xscale(linesets[i].values[j].x); })
-                    .attr("x2", function(d, j) { return xscale(linesets[i].values[j].x); })
-                    .attr("y1", function(d, j) { 
-                              return yscale(Math.max(do_y_log ? 1 : 0, 
-                                                     linesets[i].values[j].y - d[0])); 
-                     })
-                    .attr("y2", function(d, j) { return yscale(linesets[i].values[j].y + d[1]); })
-                    .style("stroke", linesets[i].error_color || "grey");
-            }
-            svg.append("path")
-                .attr("d", line(linesets[i].values))
-                .attr("class", "lines_" + i)
-                .attr("fill", "none")
-                .attr("stroke", linesets[i].color || "grey")
-                .attr("stroke-width", linesets[i].width || 1);
-        }
-
-        // Horizontal and vertical lines
-        _.each(vbars, function (v) {
-                          svg.append("svg:line")
-                              .attr("x1", xscale(v.vbar.pos))
-                              .attr("y1", yscale(yextent[0]))
-                              .attr("x2", xscale(v.vbar.pos))
-                              .attr("y2", yscale(yextent[1]))
-                              .style("stroke", v.vbar.color);
+        // Add rectangular, colored regions of interest
+        _.each(regions, function (v, i) {
+            chartBody.append("svg:rect")
+                .attr("id", "region-" + i);
         });
 
-        _.each(hbars, function (v) {
-                          svg.append("svg:line")
-                              .attr("x1", xscale(xextent[0]))
-                              .attr("y1", yscale(v.hbar.pos))
-                              .attr("x2", xscale(xextent[1]))
-                              .attr("y2", yscale(v.hbar.pos))
-                              .style("stroke", v.hbar.color);
+        // Histograms ("barsets")
+        _.each(barsets, function(barset, i) {
+           _.each(barset.bins, function(bar, j) {
+               chartBody.append("rect")
+                   .attr("id", "bar-" + i + "-" + j);
+           });        
+           _.each(barset.errors, function(barerr, j) {
+               chartBody.append("line")
+                   .attr("id", "bar-error-" + i + "-" + j);
+           });
         });
 
-        _.each(lines, function (v) {
-                          svg.append("svg:line")
-                              .attr("x1", xscale(v.line.x0))
-                              .attr("y1", yscale(v.line.y0))
-                              .attr("x2", xscale(v.line.x1))
-                              .attr("y2", yscale(v.line.y1))
-                              .style("stroke", v.line.color);
+        // Linesets
+        _.each(linesets, function(lineset, i) {
+           chartBody.append("path")
+               .attr("id", "path-" + i);
+           _.each(lineset.errors, function(lineerr, j) {
+               chartBody.append("line")
+                   .attr("id", "line-error-" + i + "-" + j);
+           });
         });
 
-        // Text annotations
+        // Pointsets
+        _.each(pointsets, function(pointset, i) {
+            _.each(pointset.values, function(point, j) {
+               chartBody.append("circle")
+                   .attr("id", "point-" + i + "-" + j);
+            });
+           _.each(pointset.errors, function(pointerr, j) {
+               chartBody.append("line")
+                   .attr("id", "point-error-" + i + "-" + j);
+           });
+        });
+
+        // Add vertical bars
+        _.each(vbars, function (v, i) {
+            chartBody.append("line")
+                       .attr("id", "vbar-" + i);
+        });
+
+        // Add horizontal bars
+        _.each(hbars, function (v, i) {
+            chartBody.append("line")
+                       .attr("id", "hbar-" + i);
+        });
+
+        // Add (potentially) diagonal lines
+        // (data, not display, coordinates)
+        _.each(lines, function (v, i) {
+            chartBody.append("line")
+                       .attr("id", "line-" + i);
+        });
+
+        // Text annotations - these do not zoom/scroll
         _.each(notes, function (v) {
                           var X, Y;
                           if(v.note.units === "pixels") {
                               X = v.note.x;
                               Y = v.note.y;
                           } else {
+                              // FIXME: Handle zoom transformation
                               X = xscale(v.note.x);
                               Y = yscale(v.note.y);
                           }
@@ -272,13 +225,135 @@ i3d3 = (function(i3d3, window, undefined) {
                               .attr("style", v.note.style || "");
         });
 
-        if(opt.title) {
-            svg.append("text")
-                .attr("class", "title")
-                .attr("x", w/2)
-                .attr("y", padding_top - 10)
-                .text(opt.title);            
+        function draw() {
+            // Render axes
+            svg.select(".x.axis").call(xAxis);
+            svg.select(".y.axis").call(yAxis);
+
+            // Render regions
+            _.each(regions, function(r, i) {
+                 chartBody.select("#region-" + i)
+                           .attr("x", xscale(r.region.min))
+                           .attr("y", padding_top)
+                           .attr("width", xscale(r.region.max) - xscale(r.region.min))
+                           .attr("height", h)
+                           .attr("fill", r.region.color);
+            });
+
+            // Render histograms
+            _.each(barsets, function(barset, i) {
+                xmin = barset.range[0];
+                xmax = barset.range[1];
+                _.each(barset.bins, function(bin, j) {
+                    chartBody.select("#bar-" + i + "-" + j)
+                       .attr("x", x_for_bin(barset.bins.length, xmin, xmax, j))
+                       .attr("y", yscale(bin))
+                       .attr("fill", barset.color || "grey")
+                       .attr("width", Math.max(0, ((xscale(xmax) - xscale(xmin)) / barset.bins.length - 0.1)))
+                       .attr("height", Math.max(0, h - (padding_bottom + yscale(bin))))
+                       .attr("stroke", barset.color || "grey")
+                       .attr("opacity", barset.opacity || 1);
+                });
+                _.each(barset.errors, function(bin_error, j) {
+                    chartBody.select("#bar-error-" + i + "-" + j)
+                        .attr("x1", x_for_bin(barset.bins.length, xmin, xmax, j + 0.5))
+                        .attr("x2", x_for_bin(barset.bins.length, xmin, xmax, j + 0.5))
+                        .attr("y1", yscale(Math.max(do_y_log ? 1 : 0, barset.bins[j] - bin_error[0])))
+                        .attr("y2", yscale(barset.bins[j] + bin_error[1]))
+                        .style("stroke", barset.error_color || "grey");
+                });
+            });
+
+            line = d3.svg.line()
+                .x(function (d) { return xscale(d.x); })
+                .y(function (d) { return yscale(d.y); });
+
+            // Render linesets
+            _.each(linesets, function(lineset, i) {
+                chartBody.select("#path-" + i)
+                    .attr("d", line(lineset.values))
+                    .attr("fill", "none")
+                    .attr("stroke", lineset.color || "grey")
+                    .attr("stroke-width", lineset.width || 1);
+                _.each(lineset.errors, function(line_error, j) {
+                    chartBody.select("#line-error-" + i + "-" + j)
+                        .attr("x1", xscale(lineset.values[j].x))
+                        .attr("x2", xscale(lineset.values[j].x))
+                        .attr("y1", yscale(Math.max(do_y_log ? 1 : 0, lineset.values[j].y - line_error[0])))
+                        .attr("y2", yscale(Math.max(lineset.values[j].y + line_error[1])))
+                        .style("stroke", lineset.error_color || "grey");
+                });
+            });
+            
+            // Render pointsets
+            _.each(pointsets, function(pointset, i) {
+                _.each(pointset.errors, function(point_error, j) {
+                    chartBody.select("#point-error-" + i + "-" + j)
+                        .attr("x1", xscale(pointset.values[j].x))
+                        .attr("x2", xscale(pointset.values[j].x))
+                        .attr("y1", yscale(Math.max(do_y_log ? 1 : 0, pointset.values[j].y - point_error[0])))
+                        .attr("y2", yscale(Math.max(pointset.values[j].y + point_error[1])))
+                        .style("stroke", pointset.error_color || "grey");
+                });
+                _.each(pointset.values, function(point, j) {
+                    chartBody.select("#point-" + i + "-" + j)
+                    .attr("cx", xscale(point.x))
+                    .attr("cy", yscale(point.y))
+                    .attr("r", pointset.size || 4)
+                    .attr("fill", pointset.color || "grey");
+                });
+            });
+
+            // Render vertical bars
+            _.each(vbars, function(v, i) {
+                 chartBody.select("#vbar-" + i)
+                      .attr("x1", xscale(v.vbar.pos))
+                      .attr("y1", padding_top)
+                      .attr("x2", xscale(v.vbar.pos))
+                      .attr("y2", h + padding_top)
+                      .style("stroke", v.vbar.color);                                              
+            });
+
+            // Render horizontal bars
+            _.each(hbars, function(h, i) {
+                 chartBody.select("#hbar-" + i)
+                      .attr("x1", padding_left)
+                      .attr("y1", yscale(h.hbar.pos))
+                      .attr("x2", padding_left + w)
+                      .attr("y2", yscale(h.hbar.pos))
+                      .style("stroke", h.hbar.color);                                              
+            });
+
+            // Render diagonal lines
+            _.each(lines, function(l, i) {
+                 chartBody.select("#line-" + i)
+                      .attr("x1", xscale(l.line.x0))
+                      .attr("y1", yscale(l.line.y0))
+                      .attr("x2", xscale(l.line.x1))
+                      .attr("y2", yscale(l.line.y1))
+                      .style("stroke", l.line.color);                                              
+            });
+
         }
+
+        draw();
+
+        zoom = d3.behavior.zoom()
+                   .x(xscale)
+                   .y(yscale)
+                   .on("zoom", draw);
+
+        // Restrict zoom action to display box (non-axis part) only:
+        svg.append("svg:rect")
+            .attr("class", "pane")
+            .attr("width", w - (padding_left + padding_right))
+            .attr("height", h - (padding_top + padding_bottom))
+            .attr("cursor", "move")
+            .attr("fill", "none")
+            .attr("pointer-events", "all")
+            .attr("x", padding_left)
+            .attr("y", padding_top)
+            .call(zoom);
 
         return svg;
     }
