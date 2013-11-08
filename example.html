@@ -73,6 +73,7 @@ i3d3.plot({data: [{type: "bars",
            padding_right: 50, 
            xlabel: "UTC",
            ylabel: "N",
+           zoom: "y",
            extras: [{region: {min: r0, max: r1, color: "lavender"}},
                     {vbar: {pos: tv, color: "indianred"}}, 
                     {note: {x: 0.25 * w, y: 0.3 * h, text: "Preliminary",
@@ -247,7 +248,8 @@ i3d3.plot({data: [{type: "bars",
            padding_top: 30,
            xlabel: "bin",
            ylabel: "Events",
-           title: "Sterile Neutrinos, w/ cut",
+           title: "Sterile Neutrinos, no zoom",
+           zoom: "none",
            extras: [{vbar: {pos: 12, color: "red"}}]});
 
 </script>

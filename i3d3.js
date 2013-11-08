@@ -69,6 +69,7 @@ i3d3 = (function(i3d3, window, undefined) {
             regions = select(opt.extras, "region"),
             notes = select(opt.extras, "note"),
             lines = select(opt.extras, "line"),
+            zoomopt = opt.zoom || "x",
             svg = d3.select("#" + opt.div).append("svg")
               .attr("width", w)
               .attr("height", h);
@@ -338,22 +339,28 @@ i3d3 = (function(i3d3, window, undefined) {
 
         draw();
 
-        zoom = d3.behavior.zoom()
-                   .x(xscale)
-                   .y(yscale)
-                   .on("zoom", draw);
-
-        // Restrict zoom action to display box (non-axis part) only:
-        svg.append("svg:rect")
-            .attr("class", "pane")
-            .attr("width", w - (padding_left + padding_right))
-            .attr("height", h - (padding_top + padding_bottom))
-            .attr("cursor", "move")
-            .attr("fill", "none")
-            .attr("pointer-events", "all")
-            .attr("x", padding_left)
-            .attr("y", padding_top)
-            .call(zoom);
+        // Wire in zoom behavior:
+        if(zoomopt != "none") {
+            zoom = d3.behavior.zoom();
+            if(zoomopt === "both" || zoomopt === "x") {
+                zoom = zoom.x(xscale);
+            }
+            if(zoomopt === "both" || zoomopt === "y") {
+                zoom = zoom.y(yscale);
+            }
+            zoom = zoom.on("zoom", draw);
+            // Restrict zoom action to display box (non-axis part) only:
+            svg.append("svg:rect")
+                .attr("class", "pane")
+                .attr("width", w - (padding_left + padding_right))
+                .attr("height", h - (padding_top + padding_bottom))
+                .attr("cursor", "move")
+                .attr("fill", "none")
+                .attr("pointer-events", "all")
+                .attr("x", padding_left)
+                .attr("y", padding_top)
+                .call(zoom);
+        }
 
         return svg;
     }
