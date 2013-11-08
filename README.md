@@ -49,12 +49,12 @@ are (watch this space for updated status as the project progresses):
 - Log / linear y-axes
 - Two-sided error bars for points and histograms
 - Allow addition of titles to plots
+- Zooming / panning
 
 #### Not done, in order of priority
 
 - Minor (unlabled) gridline for X (or T) axes
 - Axis-free representations (sparklines)
-- Zooming / panning
 - Exporting plot graphic (either SVG or PDF would be OK)
 - Show (x,y) plot coordinates of mouse [?]
 - Optional grids in chart backgrounds
