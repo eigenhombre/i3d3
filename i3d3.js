@@ -246,6 +246,9 @@ i3d3 = (function(i3d3, window, undefined) {
                 xmin = barset.range[0];
                 xmax = barset.range[1];
                 _.each(barset.bins, function(bin, j) {
+                    if(do_y_log && bin === 0) {
+                        return;
+                    }
                     chartBody.select("#bar-" + i + "-" + j)
                        .attr("x", x_for_bin(barset.bins.length, xmin, xmax, j))
                        .attr("y", yscale(bin))

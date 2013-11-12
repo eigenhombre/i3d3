@@ -227,7 +227,7 @@ function exponential_histo(nnoise, pwr_noise, nsignal, pwr_signal) {
     });
 
     var bins = _.map(_.range(30), function(i) {
-        return i3d3.existy(by_rounded[i]) ? by_rounded[i].length : 1; // 1 to handle log scale
+        return i3d3.existy(by_rounded[i]) ? by_rounded[i].length : 0;
     });
 
     return bins;
