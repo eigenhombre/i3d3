@@ -16,7 +16,7 @@ i3d3 = (function(i3d3, window, undefined) {
     }
 
     function concat_contents(l) {
-        return _.flatten(l, _.shallow);
+        return _.flatten(l, "shallow");
     }
 
     function combine_values(data) {
@@ -31,6 +31,49 @@ i3d3 = (function(i3d3, window, undefined) {
 
     function existy(x) { return x != null; };   // Michael Fogus, "Functional JavaScript"
 
+    function get_y_extent(barsets, pointsets, linesets, do_y_log, min_log_y) {
+        function min_max_for_bin(barsets, iset, ibin) {
+            if(barsets[iset].errors) {
+                return [barsets[iset].bins[ibin] -
+                        barsets[iset].errors[ibin][0],
+                        barsets[iset].bins[ibin] + 
+                        barsets[iset].errors[ibin][1]];
+            } else {
+                return [barsets[iset].bins[ibin],
+                        barsets[iset].bins[ibin]];
+            }
+        }
+        // Histogram min/max, including error bars:
+        var bin_min_max_pairs = concat_contents(_.map(
+            _.range(barsets.length), function(iset) {
+                return _.map(_.range(barsets[iset].bins.length), function(ibin) {
+                                 return min_max_for_bin(barsets, iset, ibin);
+                             });
+            }));
+
+        var hi_bins = _.map(bin_min_max_pairs, _.first);
+        var lo_bins = _.map(bin_min_max_pairs, _.last);
+
+        // Points min/max
+        var all_point_ys = _.pluck(concat_contents(_.pluck(pointsets, "values")), "y");
+
+        // Lines min/max
+        var all_line_ys = _.pluck(concat_contents(_.pluck(linesets, "values")), "y");
+        var everything = concat_contents([hi_bins, lo_bins, all_point_ys, all_line_ys]);
+        var min = _.min(everything);
+        var max = _.max(everything);
+        
+        return [do_y_log ? min_log_y : min, max];
+    }
+
+    function get_x_extent(barsets, pointsets, linesets) {
+        var allpoints = combine_values(pointsets.concat(linesets));
+        var xs_from_points_and_hists = _.flatten([_.pluck(barsets, "range"),
+                                                  _.pluck(allpoints, "x")]);
+        return [_.min(xs_from_points_and_hists),
+                _.max(xs_from_points_and_hists)];
+    }
+
     function doplot(opt) {
         // Initial setup
         var xAxis, yAxis, i, xx, yy, line, xmin, xmax, zoom,
@@ -41,20 +84,13 @@ i3d3 = (function(i3d3, window, undefined) {
             padding_right = existy(opt.padding_right) && opt.padding_right || 8,
             padding_bottom = existy(opt.padding_bottom) && opt.padding_bottom || 50,
             padding_top = existy(opt.padding_top) && opt.padding_top || 8,
-            allpoints = combine_values(pointsets.concat(linesets)),//FIXME: handle bins for histos
             minhistx = _.min(_.map(barsets, function (e) { return e.range[0]; })),
             maxhistx = _.max(_.map(barsets, function (e) { return e.range[1]; })),
             maxhisty = _.max(_.map(barsets, function (e) { return d3.max(e.bins); })),
-            xs_from_points_and_hists = _.flatten([_.pluck(barsets, "range"),
-                                                  _.pluck(allpoints, "x")]),
-            ys_from_points_and_hists = _.flatten([0, 
-                                                  _.pluck(barsets, "bins"),
-                                                  _.pluck(allpoints, "y")]),
+            min_log_y = 0.5,
             do_y_log = opt.yscale == "log",
-            yextent = [do_y_log ? 1 : _.min(ys_from_points_and_hists),
-                       _.max(ys_from_points_and_hists)],
-            xextent = [_.min(xs_from_points_and_hists),
-                       _.max(xs_from_points_and_hists)],
+            yextent = get_y_extent(barsets, pointsets, linesets, do_y_log, min_log_y),
+            xextent = get_x_extent(barsets, pointsets, linesets),
             w = opt.size[0],
             h = opt.size[1],
             dotimes = _.every(xextent, _.isDate),
@@ -262,7 +298,7 @@ i3d3 = (function(i3d3, window, undefined) {
                     chartBody.select("#bar-error-" + i + "-" + j)
                         .attr("x1", x_for_bin(barset.bins.length, xmin, xmax, j + 0.5))
                         .attr("x2", x_for_bin(barset.bins.length, xmin, xmax, j + 0.5))
-                        .attr("y1", yscale(Math.max(do_y_log ? 1 : 0, barset.bins[j] - bin_error[0])))
+                        .attr("y1", yscale(Math.max(do_y_log ? min_log_y : 0, barset.bins[j] - bin_error[0])))
                         .attr("y2", yscale(barset.bins[j] + bin_error[1]))
                         .style("stroke", barset.error_color || "grey");
                 });
