@@ -174,40 +174,40 @@ i3d3 = (function(i3d3, window, undefined) {
         }
 
         var clip = svg.append("clipPath")
-            .attr("id", "clip")
+            .attr("id", "clip_" + opt.div)
             .append("rect")
             .attr("x", padding_left)
             .attr("y", padding_top)
             .attr("width", w - (padding_left + padding_right))
             .attr("height", h - (padding_top + padding_bottom));
 
-        var chartBody = svg.append("g").attr("clip-path", "url(#clip)");
+        var chartBody = svg.append("g").attr("clip-path", "url(#clip_" + opt.div + ")");
 
         // Add rectangular, colored regions of interest
         _.each(regions, function (v, i) {
             chartBody.append("svg:rect")
-                .attr("id", "region-" + i);
+                .attr("id", "region-" + opt.div + "-" + i);
         });
 
         // Histograms ("barsets")
         _.each(barsets, function(barset, i) {
            _.each(barset.bins, function(bar, j) {
                chartBody.append("rect")
-                   .attr("id", "bar-" + i + "-" + j);
+                   .attr("id", "bar-" + opt.div + "-" + i + "-" + j);
            });        
            _.each(barset.errors, function(barerr, j) {
                chartBody.append("line")
-                   .attr("id", "bar-error-" + i + "-" + j);
+                   .attr("id", "bar-error-" + opt.div + "-" + i + "-" + j);
            });
         });
 
         // Linesets
         _.each(linesets, function(lineset, i) {
            chartBody.append("path")
-               .attr("id", "path-" + i);
+               .attr("id", "path-" + opt.div + "-" + i);
            _.each(lineset.errors, function(lineerr, j) {
                chartBody.append("line")
-                   .attr("id", "line-error-" + i + "-" + j);
+                   .attr("id", "line-error-" + opt.div + "-" + i + "-" + j);
            });
         });
 
@@ -215,31 +215,31 @@ i3d3 = (function(i3d3, window, undefined) {
         _.each(pointsets, function(pointset, i) {
             _.each(pointset.values, function(point, j) {
                chartBody.append("circle")
-                   .attr("id", "point-" + i + "-" + j);
+                   .attr("id", "point-" + opt.div + "-" + i + "-" + j);
             });
            _.each(pointset.errors, function(pointerr, j) {
                chartBody.append("line")
-                   .attr("id", "point-error-" + i + "-" + j);
+                   .attr("id", "point-error-" + opt.div + "-" + i + "-" + j);
            });
         });
 
         // Add vertical bars
         _.each(vbars, function (v, i) {
             chartBody.append("line")
-                       .attr("id", "vbar-" + i);
+                       .attr("id", "vbar-" + opt.div + "-" + i);
         });
 
         // Add horizontal bars
         _.each(hbars, function (v, i) {
             chartBody.append("line")
-                       .attr("id", "hbar-" + i);
+                       .attr("id", "hbar-" + opt.div + "-" + i);
         });
 
         // Add (potentially) diagonal lines
         // (data, not display, coordinates)
         _.each(lines, function (v, i) {
             chartBody.append("line")
-                       .attr("id", "line-" + i);
+                       .attr("id", "line-" + opt.div + "-" + i);
         });
 
         // Text annotations - these do not zoom/scroll
@@ -269,7 +269,7 @@ i3d3 = (function(i3d3, window, undefined) {
 
             // Render regions
             _.each(regions, function(r, i) {
-                 chartBody.select("#region-" + i)
+                 chartBody.select("#region-" + opt.div + "-" + i)
                            .attr("x", xscale(r.region.min))
                            .attr("y", padding_top)
                            .attr("width", xscale(r.region.max) - xscale(r.region.min))
@@ -285,7 +285,7 @@ i3d3 = (function(i3d3, window, undefined) {
                     if(do_y_log && bin === 0) {
                         return;
                     }
-                    chartBody.select("#bar-" + i + "-" + j)
+                    chartBody.select("#bar-" + opt.div + "-" + i + "-" + j)
                        .attr("x", x_for_bin(barset.bins.length, xmin, xmax, j))
                        .attr("y", yscale(bin))
                        .attr("fill", barset.color || "grey")
@@ -295,7 +295,7 @@ i3d3 = (function(i3d3, window, undefined) {
                        .attr("opacity", barset.opacity || 1);
                 });
                 _.each(barset.errors, function(bin_error, j) {
-                    chartBody.select("#bar-error-" + i + "-" + j)
+                    chartBody.select("#bar-error-" + opt.div + "-" + i + "-" + j)
                         .attr("x1", x_for_bin(barset.bins.length, xmin, xmax, j + 0.5))
                         .attr("x2", x_for_bin(barset.bins.length, xmin, xmax, j + 0.5))
                         .attr("y1", yscale(Math.max(do_y_log ? min_log_y : 0, barset.bins[j] - bin_error[0])))
@@ -310,13 +310,13 @@ i3d3 = (function(i3d3, window, undefined) {
 
             // Render linesets
             _.each(linesets, function(lineset, i) {
-                chartBody.select("#path-" + i)
+                chartBody.select("#path-" + opt.div + "-" + i)
                     .attr("d", line(lineset.values))
                     .attr("fill", "none")
                     .attr("stroke", lineset.color || "grey")
                     .attr("stroke-width", lineset.width || 1);
                 _.each(lineset.errors, function(line_error, j) {
-                    chartBody.select("#line-error-" + i + "-" + j)
+                    chartBody.select("#line-error-" + opt.div + "-" + i + "-" + j)
                         .attr("x1", xscale(lineset.values[j].x))
                         .attr("x2", xscale(lineset.values[j].x))
                         .attr("y1", yscale(Math.max(do_y_log ? 1 : 0, lineset.values[j].y - line_error[0])))
@@ -328,7 +328,7 @@ i3d3 = (function(i3d3, window, undefined) {
             // Render pointsets
             _.each(pointsets, function(pointset, i) {
                 _.each(pointset.errors, function(point_error, j) {
-                    chartBody.select("#point-error-" + i + "-" + j)
+                    chartBody.select("#point-error-" + opt.div + "-" + i + "-" + j)
                         .attr("x1", xscale(pointset.values[j].x))
                         .attr("x2", xscale(pointset.values[j].x))
                         .attr("y1", yscale(Math.max(do_y_log ? 1 : 0, pointset.values[j].y - point_error[0])))
@@ -336,7 +336,7 @@ i3d3 = (function(i3d3, window, undefined) {
                         .style("stroke", pointset.error_color || "grey");
                 });
                 _.each(pointset.values, function(point, j) {
-                    chartBody.select("#point-" + i + "-" + j)
+                    chartBody.select("#point-" + opt.div + "-" + i + "-" + j)
                     .attr("cx", xscale(point.x))
                     .attr("cy", yscale(point.y))
                     .attr("r", pointset.size || 4)
@@ -346,7 +346,7 @@ i3d3 = (function(i3d3, window, undefined) {
 
             // Render vertical bars
             _.each(vbars, function(v, i) {
-                 chartBody.select("#vbar-" + i)
+                 chartBody.select("#vbar-" + opt.div + "-" + i)
                       .attr("x1", xscale(v.vbar.pos))
                       .attr("y1", padding_top)
                       .attr("x2", xscale(v.vbar.pos))
@@ -356,7 +356,7 @@ i3d3 = (function(i3d3, window, undefined) {
 
             // Render horizontal bars
             _.each(hbars, function(h, i) {
-                 chartBody.select("#hbar-" + i)
+                 chartBody.select("#hbar-" + opt.div + "-" + i)
                       .attr("x1", padding_left)
                       .attr("y1", yscale(h.hbar.pos))
                       .attr("x2", padding_left + w)
@@ -366,7 +366,7 @@ i3d3 = (function(i3d3, window, undefined) {
 
             // Render diagonal lines
             _.each(lines, function(l, i) {
-                 chartBody.select("#line-" + i)
+                 chartBody.select("#line-" + opt.div + "-" + i)
                       .attr("x1", xscale(l.line.x0))
                       .attr("y1", yscale(l.line.y0))
                       .attr("x2", xscale(l.line.x1))
