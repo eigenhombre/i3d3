@@ -62,8 +62,10 @@ i3d3 = (function(i3d3, window, undefined) {
         var everything = concat_contents([hi_bins, lo_bins, all_point_ys, all_line_ys]);
         var min = _.min(everything);
         var max = _.max(everything);
-        
-        return [do_y_log ? min_log_y : min, max];
+        var range = max - min;
+        var padded_min = min - range / 10.0;
+        var padded_max = max + range / 10.0;
+        return [do_y_log ? min_log_y : padded_min, padded_max];
     }
 
     function get_x_extent(barsets, pointsets, linesets) {
