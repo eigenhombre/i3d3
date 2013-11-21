@@ -49,7 +49,7 @@ are (watch this space for updated status as the project progresses):
 - Log / linear y-axes
 - Two-sided error bars for points and histograms
 - Allow addition of titles to plots
-- Zooming / panning
+- Zooming / panning, with selective zoom on either access by holding shift key
 
 #### Not done, in order of priority
 

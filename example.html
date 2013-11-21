@@ -73,13 +73,11 @@ i3d3.plot({data: [{type: "bars",
            padding_right: 50, 
            xlabel: "UTC",
            ylabel: "N",
-           zoom: "y",
            extras: [{region: {min: r0, max: r1, color: "lavender"}},
                     {vbar: {pos: tv, color: "indianred"}}, 
                     {note: {x: 0.25 * w, y: 0.3 * h, text: "Preliminary",
                             color: "rosybrown", units: "pixels"}}],
 });
-
 
 i3d3.plot({data: [{type: "bars",
                    bins: testdata(330, 1000),
@@ -99,7 +97,6 @@ i3d3.plot({data: [{type: "bars",
            extras: [{vbar: {pos: 2500, color: "blue"}},
                     {vbar: {pos: 3250, color: "red"}}],
 });
-
 
 i3d3.plot({data: [{type: "bars",
                    bins: testdata(100),
@@ -174,6 +171,7 @@ function tcurve(t0, t1, n, offset, jitter) {
      }); 
 }
 
+  
 i3d3.plot({data: [{type: "lines",
                    values: tcurve(makedate("2013-01-10 13:45:00"),
                                   makedate("2013-01-10 13:48:00"),
@@ -248,8 +246,7 @@ i3d3.plot({data: [{type: "bars",
            padding_top: 30,
            xlabel: "bin",
            ylabel: "Events",
-           title: "Sterile Neutrinos, no zoom",
-           zoom: "none",
+           title: "Sterile Neutrinos",
            extras: [{vbar: {pos: 12, color: "red"}}]});
 
 </script>

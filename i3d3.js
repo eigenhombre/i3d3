@@ -8,8 +8,13 @@ if(!i3d3) {
     var i3d3 = {};
 }
 
+
+
 i3d3 = (function(i3d3, window, undefined) {
     var me = {};
+    me.zoom = {};
+    me.xscale = {};
+    me.yscale = {};
 
     function select(vec, key) { 
         return _.filter(vec, function (x) { return !_.isUndefined(x[key]); }); 
@@ -78,7 +83,7 @@ i3d3 = (function(i3d3, window, undefined) {
 
     function doplot(opt) {
         // Initial setup
-        var xAxis, yAxis, i, xx, yy, line, xmin, xmax, zoom,
+        var xAxis, yAxis, i, xx, yy, line, xmin, xmax,
             pointsets = _.filter(opt.data, function (e) { return e.type === "points"; }),
             linesets = _.filter(opt.data, function (e) { return e.type === "lines"; }),
             barsets = _.filter(opt.data, function(e) { return e.type === "bars"; }),
@@ -86,9 +91,6 @@ i3d3 = (function(i3d3, window, undefined) {
             padding_right = existy(opt.padding_right) && opt.padding_right || 8,
             padding_bottom = existy(opt.padding_bottom) && opt.padding_bottom || 50,
             padding_top = existy(opt.padding_top) && opt.padding_top || 8,
-            minhistx = _.min(_.map(barsets, function (e) { return e.range[0]; })),
-            maxhistx = _.max(_.map(barsets, function (e) { return e.range[1]; })),
-            maxhisty = _.max(_.map(barsets, function (e) { return d3.max(e.bins); })),
             min_log_y = 0.5,
             do_y_log = opt.yscale == "log",
             yextent = get_y_extent(barsets, pointsets, linesets, do_y_log, min_log_y),
@@ -107,7 +109,6 @@ i3d3 = (function(i3d3, window, undefined) {
             regions = select(opt.extras, "region"),
             notes = select(opt.extras, "note"),
             lines = select(opt.extras, "line"),
-            zoomopt = opt.zoom || "x",
             svg = d3.select("#" + opt.div).append("svg")
               .attr("width", w)
               .attr("height", h);
@@ -269,6 +270,7 @@ i3d3 = (function(i3d3, window, undefined) {
             svg.select(".x.axis").call(xAxis);
             svg.select(".y.axis").call(yAxis);
 
+
             // Render regions
             _.each(regions, function(r, i) {
                  chartBody.select("#region-" + opt.div + "-" + i)
@@ -380,29 +382,46 @@ i3d3 = (function(i3d3, window, undefined) {
 
         draw();
 
-        // Wire in zoom behavior:
-        if(zoomopt != "none") {
-            zoom = d3.behavior.zoom();
-            if(zoomopt === "both" || zoomopt === "x") {
-                zoom = zoom.x(xscale);
+        // Wire in zoom behavior. In order to get the global / page
+        // shift key down event to handle zoom events in a specific
+        // div, we have to store separate zoom behaviors for each div.
+        me.zoom[opt.div] = d3.behavior.zoom();
+        me.zoom[opt.div].x(xscale);
+        me.zoom[opt.div].scaleExtent([0.01, 100]);
+        me.zoom[opt.div].on("zoom", draw);
+        me.xscale[opt.div] = xscale;
+        me.yscale[opt.div] = yscale;
+        
+        // Restrict zoom action to display box (non-axis part) only:
+        svg.append("svg:rect")
+            .attr("class", "pane")
+            .attr("id", "pane-" + opt.div)
+            .attr("width", w - (padding_left + padding_right))
+            .attr("height", h - (padding_top + padding_bottom))
+            .attr("cursor", "move")
+            .attr("fill", "none")
+            .attr("pointer-events", "all")
+            .attr("x", padding_left)
+            .attr("y", padding_top)
+            .on("mouseover", function() { me.hover_div = opt.div; })
+            .call(me.zoom[opt.div]);
+
+        function keydown() {
+            if (!me.hover_div) return;
+            if(d3.event.shiftKey) {
+                me.zoom[me.hover_div].x(d3.scale.linear());
+                me.zoom[me.hover_div].y(me.yscale[me.hover_div]);
             }
-            if(zoomopt === "both" || zoomopt === "y") {
-                zoom = zoom.y(yscale);
-            }
-            zoom = zoom.on("zoom", draw);
-            // Restrict zoom action to display box (non-axis part) only:
-            svg.append("svg:rect")
-                .attr("class", "pane")
-                .attr("width", w - (padding_left + padding_right))
-                .attr("height", h - (padding_top + padding_bottom))
-                .attr("cursor", "move")
-                .attr("fill", "none")
-                .attr("pointer-events", "all")
-                .attr("x", padding_left)
-                .attr("y", padding_top)
-                .call(zoom);
         }
 
+        function keyup() {
+            if (!me.hover_div) return;
+            me.zoom[me.hover_div].y(d3.scale.linear());
+            me.zoom[me.hover_div].x(me.xscale[me.hover_div]);
+        }
+
+        d3.select("body").on("keydown", keydown);
+        d3.select("body").on("keyup", keyup);
         return svg;
     }
     me.plot = doplot;
