@@ -409,14 +409,14 @@ i3d3 = (function(i3d3, window, undefined) {
         function keydown() {
             if (!me.hover_div) return;
             if(d3.event.shiftKey) {
-                me.zoom[me.hover_div].x(d3.scale.linear());
+                me.zoom[me.hover_div].x(d3.scale.linear()); // reset x zoom
                 me.zoom[me.hover_div].y(me.yscale[me.hover_div]);
             }
         }
 
         function keyup() {
             if (!me.hover_div) return;
-            me.zoom[me.hover_div].y(d3.scale.linear());
+            me.zoom[me.hover_div].y(d3.scale.linear()); // reset y zoom
             me.zoom[me.hover_div].x(me.xscale[me.hover_div]);
         }
 
