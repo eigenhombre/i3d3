@@ -82,7 +82,7 @@ i3d3 = (function(i3d3, window, undefined) {
     }
 
     function get_dim_from_div(div) {
-        qdiv = $("#" + div);
+        var qdiv = $("#" + div);
         return [qdiv.width(), qdiv.height()];
     }
 
