@@ -82,8 +82,8 @@ i3d3 = (function(i3d3, window, undefined) {
     }
 
     function get_dim_from_div(div) {
-        div = $("#" + div);
-        return [div.width(),div.height()];
+        qdiv = $("#" + div);
+        return [qdiv.width(), qdiv.height()];
     }
 
     function doplot(opt) {
