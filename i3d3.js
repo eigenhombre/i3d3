@@ -81,6 +81,11 @@ i3d3 = (function(i3d3, window, undefined) {
                 _.max(xs_from_points_and_hists)];
     }
 
+    function get_dim_from_div(div) {
+        div = $("#" + div);
+        return [div.width(),div.height()];
+    }
+
     function doplot(opt) {
         // Initial setup
         var xAxis, yAxis, i, xx, yy, line, xmin, xmax,
@@ -95,8 +100,8 @@ i3d3 = (function(i3d3, window, undefined) {
             do_y_log = opt.yscale == "log",
             yextent = get_y_extent(barsets, pointsets, linesets, do_y_log, min_log_y),
             xextent = get_x_extent(barsets, pointsets, linesets),
-            w = opt.size[0],
-            h = opt.size[1],
+            w = existy(opt.size) && opt.size[0] || get_dim_from_div(opt.div)[0],
+            h = existy(opt.size) && opt.size[1] || get_dim_from_div(opt.div)[1],
             dotimes = _.every(xextent, _.isDate),
             xscale = (dotimes ? d3.time.scale : d3.scale.linear)()
               .domain(xextent)
