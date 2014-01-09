@@ -14,7 +14,12 @@
 <div class="plot" id="plot5"></div>
 <div class="plot" id="plot6"></div> 
 <div class="plot" id="plot7"></div>  
-<div class="plot" id="plot8"></div>  
+<div class="plot" id="plot8"></div> 
+<table>
+  <tr><td><div class="plot" id="plot9"></div></td></tr>
+  <tr><td><div class="plot" id="plot10"></div></td></tr>
+  <tr><td><div class="plot" id="plot11"></div></td></tr>
+<table>
 
 <script src="i3d3.js" type="text/javascript"></script> 
 
@@ -166,7 +171,7 @@ i3d3.plot({data: [{type: "lines",
 
 function tcurve(t0, t1, n, offset, jitter) {
     return d3.range(n).map(function(i) {
-         return {x: i3d3.add_time_delta(t0, (t1 - t0) * i / n),
+         return {x: i3d3.add_time_delta(t0, (t1 - t0) * i / (n-1)),
                  y:offset + Math.random() * jitter}
      }); 
 }
@@ -205,7 +210,6 @@ i3d3.plot({data: [{type: "lines",
                       {vbar: {pos: makedate("2013-01-10 13:49:00"), color: "darkolivegreen"}},
                       {note: {x: w * 0.25, y: (h - 58) * 0.50,
                               text: "time-based histograms with curves and error bars",
-                              units: "pixels",
                               style: "font-size: 14; font-style: italic; font-weight: bold; color: #111;"}}]
 });
 
@@ -248,6 +252,33 @@ i3d3.plot({data: [{type: "bars",
            ylabel: "Events",
            title: "Sterile Neutrinos",
            extras: [{vbar: {pos: 12, color: "red"}}]});
+
+         tranges = [
+             {"id": "9",
+              "t0": makedate("2013-01-10 13:48:00.000"),
+              "t1": makedate("2013-01-10 13:48:03.000")},
+             {"id": "10",
+              "t0": makedate("2013-01-10 13:48:00.000"),
+              "t1": makedate("2013-01-13 03:48:00.000")},
+             {"id": "11",
+              "t0": makedate("2013-01-10 13:48:00.000"),
+              "t1": makedate("2013-04-10 13:48:00.000")}
+            ]
+
+_.map(tranges,function (tr){
+  i3d3.plot({data: [{type: "points",
+                     values: tcurve(tr.t0,tr.t1, 8, 10, 1),
+                     color: "darkgreen", 
+                     error_color: "green",
+                     size: 4}],
+               div: "plot"+tr.id,
+               size: [2*w, h/3],
+               padding_right: 50, 
+               xlabel: "t",
+               ylabel: "Events"
+             });
+ });
+
 
 </script>
 </body>

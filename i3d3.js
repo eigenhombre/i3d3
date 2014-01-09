@@ -128,12 +128,24 @@ i3d3 = (function(i3d3, window, undefined) {
             return xscale(x);                
         };
 
+        //Get time format for given extent
+        function get_time_format(extent) {
+           var deltat = (extent[1].getTime()-extent[0].getTime())/1000.;
+           if (deltat < 10.) return "%H:%M:%S.%L";
+           if (deltat < 600.) return "%H:%M:%S";
+           if (deltat < 86400.) return "%H:%M";
+           if (deltat < 31*86400.) return "%b, %_d %_Hh";
+           return "%Y-%m-%d";
+
+        }
+
         // Set up axes
+        //FIXME: Dynamically change time format when zooming in/out
         xAxis = d3.svg.axis()
                       .scale(xscale)
                       .orient("bottom")
                       .ticks(5)
-                      .tickFormat(dotimes ? d3.time.format("%H:%M") : undefined);
+                      .tickFormat(dotimes ? d3.time.format(get_time_format(xextent)) : undefined);
 
         yAxis = d3.svg.axis()
                       .scale(yscale)
