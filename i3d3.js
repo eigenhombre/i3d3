@@ -172,7 +172,7 @@ i3d3 = (function(i3d3, window, undefined) {
             .attr("style", opt.label_style || "")
             .text(opt.xlabel);
 
-        yy = 50;
+        yy = padding_top;
         xx = 10;
         svg.append("text")
             .attr("class", "label")
