@@ -301,6 +301,7 @@ _.map(tranges,function (tr){
   i3d3.plot({data: [{type: "points",
                      values: tcurve(tr.t0,tr.t1, 8, 10, 1),
                      color: "darkgreen", 
+                     errors: errorbars(8,0.5),
                      error_color: "green",
                      size: 4}],
                div: "plot"+tr.id,

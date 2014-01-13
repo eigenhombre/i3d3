@@ -237,13 +237,13 @@ i3d3 = (function(i3d3, window, undefined) {
 
         // Pointsets
         _.each(pointsets, function(pointset, i) {
-            _.each(pointset.values, function(point, j) {
-               chartBody.append("circle")
-                   .attr("id", "point-" + opt.div + "-" + i + "-" + j);
-            });
            _.each(pointset.errors, function(pointerr, j) {
                chartBody.append("line")
                    .attr("id", "point-error-" + opt.div + "-" + i + "-" + j);
+           });
+           _.each(pointset.values, function(point, j) {
+              chartBody.append("circle")
+                  .attr("id", "point-" + opt.div + "-" + i + "-" + j);
            });
         });
 
@@ -382,9 +382,6 @@ i3d3 = (function(i3d3, window, undefined) {
             });
             // Render ellipses
             _.each(ellipses, function(e, i) {
-                 if (! _.has(e.ellipse, "fill")) {
-                   e.ellipse.fill = "None";
-                 }
                  var x,y,rx,ry;
                  if (e.ellipse.units === "pixels") {
                      x = e.ellipse.x;
@@ -402,9 +399,9 @@ i3d3 = (function(i3d3, window, undefined) {
                       .attr("cy", y)
                       .attr("rx", rx)
                       .attr("ry", ry)
-                      .style("stroke", e.ellipse.color)
+                      .style("stroke", e.ellipse.color || "grey" )
                       .style("stroke-width", e.ellipse.width)
-                      .style("fill", e.ellipse.fill);
+                      .style("fill", e.ellipse.fill || "None" );
                     //  .style("width", e.ellipse.width);                                              
             });
             
@@ -416,7 +413,7 @@ i3d3 = (function(i3d3, window, undefined) {
                       .attr("y1", yscale(l.line.y0))
                       .attr("x2", xscale(l.line.x1))
                       .attr("y2", yscale(l.line.y1))
-                      .style("stroke", l.line.color);                                              
+                      .style("stroke", l.line.color || "grey" );                                              
             });
 
             //Render text annotations
