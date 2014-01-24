@@ -36,7 +36,7 @@ i3d3 = (function(i3d3, window, undefined) {
 
     function existy(x) { return x != null; };   // Michael Fogus, "Functional JavaScript"
 
-    function get_y_extent(barsets, pointsets, linesets, do_y_log, min_log_y) {
+    function get_y_extent(barsets, pointsets, linesets, rangesets, do_y_log, min_log_y) {
         function min_max_for_bin(barsets, iset, ibin) {
             if(barsets[iset].errors) {
                 return [barsets[iset].bins[ibin] -
@@ -64,7 +64,9 @@ i3d3 = (function(i3d3, window, undefined) {
 
         // Lines min/max
         var all_line_ys = _.pluck(concat_contents(_.pluck(linesets, "values")), "y");
-        var everything = concat_contents([hi_bins, lo_bins, all_point_ys, all_line_ys]);
+        // Range min/max
+        var all_range_ys = _.flatten(_.pluck(rangesets, "yrange"));
+        var everything = concat_contents([hi_bins, lo_bins, all_point_ys, all_line_ys, all_range_ys]);
         var min = _.min(everything);
         var max = _.max(everything);
         var range = max - min;
@@ -73,12 +75,12 @@ i3d3 = (function(i3d3, window, undefined) {
         return [do_y_log ? min_log_y : padded_min, padded_max];
     }
 
-    function get_x_extent(barsets, pointsets, linesets) {
+    function get_x_extent(barsets, pointsets, linesets, rangesets) {
         var allpoints = combine_values(pointsets.concat(linesets));
         var xs_from_points_and_hists = _.flatten([_.pluck(barsets, "range"),
-                                                  _.pluck(allpoints, "x")]);
-        return [_.min(xs_from_points_and_hists),
-                _.max(xs_from_points_and_hists)];
+                                                  _.pluck(allpoints, "x"),
+                                                  _.pluck(rangesets, "xrange")]);
+        return d3.extent(xs_from_points_and_hists);
     }
 
     function get_dim_from_div(div) {
@@ -92,14 +94,15 @@ i3d3 = (function(i3d3, window, undefined) {
             pointsets = _.filter(opt.data, function (e) { return e.type === "points"; }),
             linesets = _.filter(opt.data, function (e) { return e.type === "lines"; }),
             barsets = _.filter(opt.data, function(e) { return e.type === "bars"; }),
+            rangesets = _.filter(opt.data, function(e) { return e.type === "range"; }),
             padding_left = existy(opt.padding_left) && opt.padding_left || 50,
             padding_right = existy(opt.padding_right) && opt.padding_right || 8,
             padding_bottom = existy(opt.padding_bottom) && opt.padding_bottom || 50,
             padding_top = existy(opt.padding_top) && opt.padding_top || 8,
             min_log_y = 0.5,
             do_y_log = opt.yscale == "log",
-            yextent = get_y_extent(barsets, pointsets, linesets, do_y_log, min_log_y),
-            xextent = get_x_extent(barsets, pointsets, linesets),
+            yextent = get_y_extent(barsets, pointsets, linesets, rangesets, do_y_log, min_log_y),
+            xextent = get_x_extent(barsets, pointsets, linesets, rangesets),
             w = existy(opt.size) && opt.size[0] || get_dim_from_div(opt.div)[0],
             h = existy(opt.size) && opt.size[1] || get_dim_from_div(opt.div)[1],
             dotimes = _.every(xextent, _.isDate),
@@ -114,6 +117,7 @@ i3d3 = (function(i3d3, window, undefined) {
             regions = select(opt.extras, "region"),
             notes = select(opt.extras, "note"),
             lines = select(opt.extras, "line"),
+            ellipses = select(opt.extras, "ellipse"),
             svg = d3.select("#" + opt.div).append("svg")
               .attr("width", w)
               .attr("height", h);
@@ -128,12 +132,24 @@ i3d3 = (function(i3d3, window, undefined) {
             return xscale(x);                
         };
 
+        //Get time format for given extent
+        function get_time_format(extent) {
+           var deltat = (extent[1].getTime()-extent[0].getTime())/1000.;
+           if (deltat < 10.) return "%H:%M:%S.%L";
+           if (deltat < 600.) return "%H:%M:%S";
+           if (deltat < 86400.) return "%H:%M";
+           if (deltat < 31*86400.) return "%b, %_d %_Hh";
+           return "%Y-%m-%d";
+
+        }
+
         // Set up axes
+        //FIXME: Dynamically change time format when zooming in/out
         xAxis = d3.svg.axis()
                       .scale(xscale)
                       .orient("bottom")
                       .ticks(5)
-                      .tickFormat(dotimes ? d3.time.format("%H:%M") : undefined);
+                      .tickFormat(dotimes ? d3.time.format(get_time_format(xextent)) : undefined);
 
         yAxis = d3.svg.axis()
                       .scale(yscale)
@@ -160,7 +176,7 @@ i3d3 = (function(i3d3, window, undefined) {
             .attr("style", opt.label_style || "")
             .text(opt.xlabel);
 
-        yy = 50;
+        yy = padding_top;
         xx = 10;
         svg.append("text")
             .attr("class", "label")
@@ -221,13 +237,13 @@ i3d3 = (function(i3d3, window, undefined) {
 
         // Pointsets
         _.each(pointsets, function(pointset, i) {
-            _.each(pointset.values, function(point, j) {
-               chartBody.append("circle")
-                   .attr("id", "point-" + opt.div + "-" + i + "-" + j);
-            });
            _.each(pointset.errors, function(pointerr, j) {
                chartBody.append("line")
                    .attr("id", "point-error-" + opt.div + "-" + i + "-" + j);
+           });
+           _.each(pointset.values, function(point, j) {
+              chartBody.append("circle")
+                  .attr("id", "point-" + opt.div + "-" + i + "-" + j);
            });
         });
 
@@ -250,24 +266,16 @@ i3d3 = (function(i3d3, window, undefined) {
                        .attr("id", "line-" + opt.div + "-" + i);
         });
 
-        // Text annotations - these do not zoom/scroll
-        _.each(notes, function (v) {
-                          var X, Y;
-                          if(v.note.units === "pixels") {
-                              X = v.note.x;
-                              Y = v.note.y;
-                          } else {
-                              // FIXME: Handle zoom transformation
-                              X = xscale(v.note.x);
-                              Y = yscale(v.note.y);
-                          }
-                          svg.append("text")
-                              .attr("class", "note")
-                              .attr("x", X)
-                              .attr("y", Y)
-                              .attr("stroke", v.note.color)
-                              .text(v.note.text)
-                              .attr("style", v.note.style || "");
+        // Add ellipses
+        _.each(ellipses, function (v, i) {
+            chartBody.append("ellipse")
+                       .attr("id", "ellipse-" + opt.div + "-" + i);
+        });
+
+        // Add text annotations
+        _.each(notes, function (v, i) {
+            chartBody.append("text")
+                       .attr("id", "text-" + opt.div + "-" + i);
         });
 
         function draw() {
@@ -372,6 +380,31 @@ i3d3 = (function(i3d3, window, undefined) {
                       .attr("y2", yscale(h.hbar.pos))
                       .style("stroke", h.hbar.color);                                              
             });
+            // Render ellipses
+            _.each(ellipses, function(e, i) {
+                 var x,y,rx,ry;
+                 if (e.ellipse.units === "pixels") {
+                     x = e.ellipse.x;
+                     y = e.ellipse.y;
+                     rx = e.ellipse.rx;
+                     ry = e.ellipse.ry;
+                 } else {
+                     x = xscale(e.ellipse.x);
+                     y = yscale(e.ellipse.y);
+                     rx = xscale(e.ellipse.rx) - xscale(0);
+                     ry = yscale(0) - yscale(e.ellipse.ry);
+                 }
+                 chartBody.select("#ellipse-" + opt.div + "-" + i)
+                      .attr("cx", x)
+                      .attr("cy", y)
+                      .attr("rx", rx)
+                      .attr("ry", ry)
+                      .style("stroke", e.ellipse.color || "grey" )
+                      .style("stroke-width", e.ellipse.width)
+                      .style("fill", e.ellipse.fill || "None" );
+                    //  .style("width", e.ellipse.width);                                              
+            });
+            
 
             // Render diagonal lines
             _.each(lines, function(l, i) {
@@ -380,7 +413,26 @@ i3d3 = (function(i3d3, window, undefined) {
                       .attr("y1", yscale(l.line.y0))
                       .attr("x2", xscale(l.line.x1))
                       .attr("y2", yscale(l.line.y1))
-                      .style("stroke", l.line.color);                                              
+                      .style("stroke", l.line.color || "grey" );                                              
+            });
+
+            //Render text annotations
+            _.each(notes, function (v, i) {
+                  var X, Y;
+                  if(v.note.units === "pixels") {
+                      X = v.note.x;
+                      Y = v.note.y;
+                  } else {
+                      X = xscale(v.note.x);
+                      Y = yscale(v.note.y);
+                  }
+                 chartBody.select("#text-" + opt.div + "-" + i)
+                      .attr("class", "note")
+                      .attr("x", X)
+                      .attr("y", Y)
+                      .attr("stroke", v.note.color)
+                      .text(v.note.text)
+                      .attr("style", v.note.style || "");
             });
 
         }
