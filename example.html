@@ -135,7 +135,7 @@ i3d3.plot({data: [{type: "bars",
            extras: [{line: {x0: 600, y0: d3.max(data) * 0.2,
                             x1: 1300, y1: d3.max(data) * 0.6,
                             color: "darkolivegreen"}},
-                    {note: {x: 900, y: d3.max(data)*0.4, text: "Bad Fit", 
+                    {note: {x: 900, y: d3.max(data) * 0.4, text: "Bad Fit", 
                             color: "darkolivegreen"}}],
 
 });
@@ -164,7 +164,7 @@ i3d3.plot({data: [{type: "lines",
              label_style: "fill: lightslategray; font-weight: bold;",
              extras: [{vbar: {pos: 2, color: "blue"}},
                       {vbar: {pos: 5, color: "red"}},
-                      {note: {x: (2*w)*0.75, y: h*0.4, units: "pixels",
+                      {note: {x: (2 * w) * 0.75, y: h * 0.4, units: "pixels",
                               text: "v2.0",
                               style: "font-size: 20; font-style: italic;"}}] 
 });
@@ -216,11 +216,11 @@ i3d3.plot({data: [{type: "lines",
 
 function hotspot(x, y, n, size, psf) {
    return d3.range(n).map(function(i) {
-     var xi = x+Math.random()*size -0.5*size;
-     var yi = y+Math.random()*size -0.5*size;
+     var xi = x+Math.random() * size - 0.5 * size;
+     var yi = y+Math.random() * size - 0.5 * size;
      return {ellipse: {x:xi, y: yi,
-             rx: psf*Math.cos(yi/180.*Math.PI), ry: psf,
-             color: d3.rgb(255,yi/90.*255,0).toString()}}
+             rx: psf * Math.cos(yi/180. * Math.PI), ry: psf,
+             color: d3.rgb(255,yi/90. * 255,0).toString()}}
      }); 
 }
 
@@ -232,16 +232,16 @@ i3d3.plot({data: [{type: "range",
            padding_right: 50, 
            xlabel: "declination",
            ylabel: "right ascension",
-           extras: ([{note : { x: 0.25*w, y: 0.2*h,
+           extras: ([{note : { x: 0.25 * w, y: 0.2 * h,
                      text: "fixed", style: "font-size: 14", units: "pixels"}},
-                    {ellipse: {x: 0.3*w, y: 0.18*h, rx: 0.1*w, ry: 15, 
+                    {ellipse: {x: 0.3 * w, y: 0.18 * h, rx: 0.1 * w, ry: 15, 
                                color: "deepskyblue", units: "pixels", fill:
                                "deepskyblue" }},
                     {note : { x: 13, y: 8,
                      text: "moves", style: "font-size: 14"}},
                     {ellipse: {x: 23, y: 9, rx: 17, ry: 7, 
                         color: "greenyellow", fill: "greenyellow" }}]).concat(
-                    hotspot(0,45,30,50,5))    
+                    hotspot(0, 45, 30, 50, 5))    
 
 });
 
@@ -305,7 +305,7 @@ _.map(tranges,function (tr){
                      error_color: "green",
                      size: 4}],
                div: "plot"+tr.id,
-               size: [2*w, h/3],
+               size: [2 * w, h/3],
                padding_right: 50, 
                xlabel: "t",
                ylabel: "Events"
