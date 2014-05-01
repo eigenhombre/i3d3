@@ -1,12 +1,33 @@
 <!DOCTYPE HTML>
 <html>
-<body>
+<meta charset="utf-8">
 
-<link rel="stylesheet" type="text/css" href="style.css"/>
-<script type="text/javascript"
-         src="//cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
-<script type="text/javascript"
-         src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+  <script id="script_d3"
+          type="text/javascript"
+          src="bower_components/d3/d3.js"
+          data-cdn-url="//cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
+
+  <script id="script_underscore"
+          type="text/javascript"
+          src="bower_components/underscore/underscore.js"
+          data-cdn-url="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+
+  <script id="script_i3d3"
+          type="text/javascript"
+          src="i3d3.js"
+          data-cdn-url="//cdnjs.cloudflare.com/ajax/libs/i3d3/0.9.0/i3d3.js"></script>
+
+</head>
+
+<body>
+<script type="text/javascript">
+  if("object" != typeof d3 || "function" != typeof _){
+    document.write("d3 or underscore not found.")
+    document.write(" Run \n<pre>   bower install</pre>\n\nor use CDN to pull down dependencies");
+  }
+</script>
 
 <div class="plot" id="plot1"></div>
 <div class="plot" id="plot3"></div>
@@ -19,8 +40,6 @@
 <div class="plot" id="plot9"></div>
 <div class="plot" id="plot10"></div>
 <div class="plot" id="plot11"></div>
-
-<script src="i3d3.js" type="text/javascript"></script>
 
 <script>
 
