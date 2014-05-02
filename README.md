@@ -66,6 +66,15 @@ quite what we wanted; D3.js does not provide these directly but is
 sufficiently powerful, flexible and fast to provide a foundation to
 allow us to implement these ourselves.
 
+### Use with the Bower package manager
+
+You can use [Bower](http://bower.io) to pull down i3d3's dependencies.  Just run `bower install`.
+
+To update Bower with a new version, first update `bower.json`, then:
+
+    git tag <version>
+    git push --tags
+
 ### References
 
 http://stackoverflow.com/questions/6766547/javascript-graphing-library
