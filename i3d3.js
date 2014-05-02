@@ -1,23 +1,21 @@
-"use strict";
-/*global d3 */
 /*jslint plusplus: true, white: true */
-
-
-// Make a well-behaved module a la http://o2js.com/2011/04/24/the-module-pattern/:
-if(!i3d3) {
-    var i3d3 = {};
-}
-
-
-
-i3d3 = (function(i3d3, window, undefined) {
+/*globals _, d3, define, require, window */
+(function (factory) {
+  "use strict";
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'd3'], factory);
+  }
+  else {
+    factory(_, d3);
+  }
+}(function(_, d3) {
     var me = {};
     me.zoom = {};
     me.xscale = {};
     me.yscale = {};
 
-    function select(vec, key) { 
-        return _.filter(vec, function (x) { return !_.isUndefined(x[key]); }); 
+    function select(vec, key) {
+        return _.filter(vec, function (x) { return !_.isUndefined(x[key]); });
     }
 
     function concat_contents(l) {
@@ -31,7 +29,7 @@ i3d3 = (function(i3d3, window, undefined) {
     function add_time_delta(t0, delta) {
         var x = new Date();
         x.setTime(t0.getTime() + delta);
-        return x;                          
+        return x;
     }
 
     function existy(x) { return x != null; };   // Michael Fogus, "Functional JavaScript"
@@ -41,7 +39,7 @@ i3d3 = (function(i3d3, window, undefined) {
             if(barsets[iset].errors) {
                 return [barsets[iset].bins[ibin] -
                         barsets[iset].errors[ibin][0],
-                        barsets[iset].bins[ibin] + 
+                        barsets[iset].bins[ibin] +
                         barsets[iset].errors[ibin][1]];
             } else {
                 return [barsets[iset].bins[ibin],
@@ -129,7 +127,7 @@ i3d3 = (function(i3d3, window, undefined) {
             } else {
                 x = xmin + (xmax-xmin) * j / nbins;
             }
-            return xscale(x);                
+            return xscale(x);
         };
 
         //Get time format for given extent
@@ -218,7 +216,7 @@ i3d3 = (function(i3d3, window, undefined) {
            _.each(barset.bins, function(bar, j) {
                chartBody.append("rect")
                    .attr("id", "bar-" + opt.div + "-" + i + "-" + j);
-           });        
+           });
            _.each(barset.errors, function(barerr, j) {
                chartBody.append("line")
                    .attr("id", "bar-error-" + opt.div + "-" + i + "-" + j);
@@ -341,7 +339,7 @@ i3d3 = (function(i3d3, window, undefined) {
                         .style("stroke", lineset.error_color || "grey");
                 });
             });
-            
+
             // Render pointsets
             _.each(pointsets, function(pointset, i) {
                 _.each(pointset.errors, function(point_error, j) {
@@ -368,7 +366,7 @@ i3d3 = (function(i3d3, window, undefined) {
                       .attr("y1", padding_top)
                       .attr("x2", xscale(v.vbar.pos))
                       .attr("y2", h + padding_top)
-                      .style("stroke", v.vbar.color);                                              
+                      .style("stroke", v.vbar.color);
             });
 
             // Render horizontal bars
@@ -378,7 +376,7 @@ i3d3 = (function(i3d3, window, undefined) {
                       .attr("y1", yscale(h.hbar.pos))
                       .attr("x2", padding_left + w)
                       .attr("y2", yscale(h.hbar.pos))
-                      .style("stroke", h.hbar.color);                                              
+                      .style("stroke", h.hbar.color);
             });
             // Render ellipses
             _.each(ellipses, function(e, i) {
@@ -402,9 +400,9 @@ i3d3 = (function(i3d3, window, undefined) {
                       .style("stroke", e.ellipse.color || "grey" )
                       .style("stroke-width", e.ellipse.width)
                       .style("fill", e.ellipse.fill || "None" );
-                    //  .style("width", e.ellipse.width);                                              
+                    //  .style("width", e.ellipse.width);
             });
-            
+
 
             // Render diagonal lines
             _.each(lines, function(l, i) {
@@ -413,7 +411,7 @@ i3d3 = (function(i3d3, window, undefined) {
                       .attr("y1", yscale(l.line.y0))
                       .attr("x2", xscale(l.line.x1))
                       .attr("y2", yscale(l.line.y1))
-                      .style("stroke", l.line.color || "grey" );                                              
+                      .style("stroke", l.line.color || "grey" );
             });
 
             //Render text annotations
@@ -448,7 +446,7 @@ i3d3 = (function(i3d3, window, undefined) {
         me.zoom[opt.div].on("zoom", draw);
         me.xscale[opt.div] = xscale;
         me.yscale[opt.div] = yscale;
-        
+
         // Restrict zoom action to display box (non-axis part) only:
         svg.append("svg:rect")
             .attr("class", "pane")
@@ -484,6 +482,11 @@ i3d3 = (function(i3d3, window, undefined) {
     me.plot = doplot;
     me.add_time_delta = add_time_delta;
     me.existy = existy; // FIXME: put this somewhere else?
+
+
+    if(typeof define != "function"){
+      window.i3d3 = me;
+    }
     return me;
 
-}(i3d3, this));
+}));
