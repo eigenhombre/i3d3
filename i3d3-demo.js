@@ -1,0 +1,280 @@
+var i3d3_demo = function(_, d3, i3d3){
+
+  var h = 250,
+      w = 280;
+
+
+  function testdata(n, offset) {
+      return _.map(_.range(n), _.compose(function(x) { return x + (offset && offset || 0) },
+                                         d3.random.logNormal(Math.log(30))));
+  }
+
+
+  function errorbars(n, s) {
+     return _.map(_.range(n), function(i) {
+                return [Math.random() * s, Math.random() * s];
+            });
+  }
+
+
+  function sample_curve(ampl, phase, noise_weight, offset, sig2) {
+      return _.map(_.range(50), function(i) {
+           var x = 0.1 * i;
+           return {x: x, y: ampl * (Math.exp(-(Math.pow(x - phase, 2)/sig2)) +
+                                    Math.random()/noise_weight + offset)};
+       });
+  }
+
+
+  function makedate(s) {
+     return new Date(s.replace(/-/g, '/'));
+  }
+
+
+  var t0 = makedate("2010-10-10 00:00:00");
+  var t1 = makedate("2010-10-10 12:00:00");
+
+  var r0 = makedate("2010-10-10 06:00:00");
+  var r1 = makedate("2010-10-10 08:00:00");
+  var tv = makedate("2010-10-10 07:00:00");
+
+  var data = testdata(60, 200);
+
+  i3d3.plot({data: [{type: "bars",
+                     bins: data,
+                     color: "rosybrown",
+                     range: [t0, t1]},
+                    {type: "bars",
+                     bins: testdata(20),
+                     opacity: 0.7,
+                     range: [t0, t1]}],
+             div: "plot1",
+             size: [w, h],
+             padding_right: 50,
+             xlabel: "UTC",
+             ylabel: "N",
+             extras: [{region: {min: r0, max: r1, color: "lavender"}},
+                      {vbar: {pos: tv, color: "indianred"}},
+                      {note: {x: 0.25 * w, y: 0.3 * h, text: "Preliminary",
+                              color: "rosybrown", units: "pixels"}}],
+  });
+
+  i3d3.plot({data: [{type: "bars",
+                     bins: testdata(330, 1000),
+                     color: "lightgrey",
+                     range: [2000, 4000]},
+                    {type: "lines",
+                     width: 4,
+                     values: [{x: 2200, y: 1100}, {x: 3000, y: 1180}, {x: 3800, y: 1200}],
+                     errors: _.map(_.range(3), function() { return [20, 20] }),
+                     error_color: "black",
+                     color: "thistle"}],
+             div: "plot3",
+             size: [w, h],
+             padding_right: 50,
+             xlabel: "Slow Monopole",
+             ylabel: "Counts",
+             extras: [{vbar: {pos: 2500, color: "blue"}},
+                      {vbar: {pos: 3250, color: "red"}}],
+  });
+
+  i3d3.plot({data: [{type: "bars",
+                     bins: testdata(100),
+                     range: [-1, 1]}],
+             div: "plot4",
+             size: [w, h],
+             padding_right: 50,
+             xlabel: "sin(l)",
+             ylabel: "Neutrinos",
+             extras: [{hbar: {pos: 100, color: "orange"}},
+                      {vbar: {pos: -0.5, color: "lightgrey"}},
+                      {region: {min: -1, max: -0.5, color: "linen"}},
+                      {note: {x: 0.7 * w, y: 0.4 * h, text: "Nu_e",
+                              color: "orange", units: "pixels"}}],
+  });
+
+  i3d3.plot({data: [{type: "range",
+                     xrange: [-45, 45],
+                     yrange: [0, 90]}],
+             div: "plot5",
+             size: [w, h],
+             padding_right: 50,
+             xlabel: "Declination",
+             ylabel: "Right Ascension",
+             extras: ([{note : { x: 0.25 * w, y: 0.2 * h,
+                       text: "fixed", style: "font-size: 14", units: "pixels"}},
+                      {ellipse: {x: 0.3 * w,
+                                 y: 0.18 * h,
+                                 rx: 0.1 * w,
+                                 ry: 15,
+                                 color: "lightpink",
+                                 fill: "lightpink",
+                                 units: "pixels"}},
+                      {note : { x: 13, y: 8,
+                       text: "moves", style: "font-size: 14"}},
+                      {ellipse: {x: 23,
+                                 y: 9,
+                                 rx: 17,
+                                 ry: 7,
+                                 color: "burlywood",
+                                 fill: "burlywood" }}
+                      ]).concat(
+                       hotspot(0, 45, 30, 50, 3))
+  });
+
+  i3d3.plot({data: [{type: "lines",
+                     values: sample_curve(200, 2, 10, 0.1, 0.4),
+                     color: "blue"},
+                    {type: "points",
+                     values: sample_curve(200, 2, 5, 0.1, 0.4),
+                     color: "lightcoral",
+                     size: 1.4},
+                    {type: "bars",
+                     bins: testdata(15),
+                     color: "lightsteelblue",
+                     range: [0, 5]},
+                    {type: "bars",
+                     bins: testdata(30),
+                     color: "goldenrod",
+                     range: [2, 8]}],
+               div: "plot6",
+               size: [w * 2, h],
+               padding_right: 50,
+               xlabel: "Stuff",
+               ylabel: "Other Stuff",
+               label_style: "fill: lightslategray; font-weight: bold;",
+               extras: [{vbar: {pos: 2, color: "blue"}},
+                        {vbar: {pos: 5, color: "red"}},
+                        {note: {x: (2 * w) * 0.75, y: h * 0.4, units: "pixels",
+                                text: "v2.0",
+                                style: "font-size: 20; font-style: italic;"}}]
+  });
+
+
+  function tcurve(t0, t1, n, offset, jitter) {
+      return d3.range(n).map(function(i) {
+           return {x: i3d3.add_time_delta(t0, (t1 - t0) * i / (n-1)),
+                   y:offset + Math.random() * jitter}
+       });
+  }
+
+
+  i3d3.plot({data: [{type: "lines",
+                     values: tcurve(makedate("2013-01-10 13:45:00"),
+                                    makedate("2013-01-10 13:48:00"),
+                                    50, 10, 5),
+                     color: "blue"},
+                    {type: "points",
+                     values: tcurve(makedate("2013-01-10 13:48:00"),
+                                    makedate("2013-01-10 13:50:00"),
+                                    8, 10, 5),
+                     errors: errorbars(8, 4),
+                     color: "lightcoral",
+                     error_color: "black",
+                     size: 5},
+                    {type: "bars",
+                     bins: _.map(testdata(15), Math.log),
+                     color: "cornflowerblue",
+                     range: [makedate("2013-01-10 13:47:00"),
+                             makedate("2013-01-10 13:50:00")]},
+                    {type: "bars",
+                     bins: _.map(testdata(30), Math.log),
+                     color: "cadetblue",
+                     range: [makedate("2013-01-10 13:45:00"),
+                             makedate("2013-01-10 13:47:00")]},
+                    ],
+               div: "plot7",
+               size: [w * 2, h],
+               padding_right: 50,
+               xlabel: "t",
+               ylabel: "Zippos",
+               extras: [{vbar: {pos: makedate("2013-01-10 13:46:00"), color: "grey"}},
+                        {vbar: {pos: makedate("2013-01-10 13:49:00"), color: "darkolivegreen"}},
+                        {note: {x: w * 0.25, y: (h - 58) * 0.50,
+                                text: "time-based histograms with curves and error bars",
+                                style: "font-size: 14; font-style: italic; font-weight: bold; color: #111;"}}]
+  });
+
+
+  function hotspot(x, y, n, size, psf) {
+     return d3.range(n).map(function(i) {
+       var xi = x + Math.random() * size - 0.5 * size;
+       var yi = y + Math.random() * size - 0.5 * size;
+       return {ellipse: {x: xi,
+                         y: yi,
+                         rx: psf * Math.cos(yi/180. * Math.PI),
+                         ry: psf,
+                         color: d3.rgb(100, yi/90. * 255, 0).toString()}}});
+  }
+
+
+  function expo_points(npoints, slope) {
+      return _.map(_.range(npoints), function(i) {
+          return -Math.log(Math.random()) * slope;
+      });
+  }
+
+  function exponential_histo(nnoise, pwr_noise, nsignal, pwr_signal) {
+      var xnoise = expo_points(nnoise, pwr_noise);
+      var xsignal = expo_points(nsignal, pwr_signal);
+
+      var by_rounded = _.groupBy(xnoise.concat(xsignal), function(x) {
+          return Math.floor(x/500);
+      });
+
+      var bins = _.map(_.range(30), function(i) {
+          return i3d3.existy(by_rounded[i]) ? by_rounded[i].length : 0;
+      });
+
+      return bins;
+  }
+
+  var eh = exponential_histo(100000, 500, 100, 5000);
+
+  i3d3.plot({data: [{type: "bars",
+                     bins: eh,
+                     errors: errorbars(30, 10),
+                     color: "darkgray",
+                     error_color: "lightpink",
+                     range: [0, eh.length]}],
+             div: "plot8",
+             yscale: "log",
+             size: [w * 1.5, h * 1.5],
+             padding_right: 50,
+             padding_top: 30,
+             xlabel: "bin",
+             ylabel: "Events",
+             title: "Sterile Neutrinos",
+             extras: [{vbar: {pos: 12, color: "red"}}]});
+
+  var tranges = [{"id": "9",
+                  "t0": makedate("2013-01-10 13:48:00.000"),
+                  "t1": makedate("2013-01-10 13:48:03.000")},
+                 {"id": "10",
+                  "t0": makedate("2013-01-10 13:48:00.000"),
+                  "t1": makedate("2013-01-13 03:48:00.000")},
+                 {"id": "11",
+                  "t0": makedate("2013-01-10 13:48:00.000"),
+                  "t1": makedate("2013-04-10 13:48:00.000")}];
+
+  _.each(tranges, function (tr){
+    i3d3.plot({data: [{type: "points",
+                       values: tcurve(tr.t0, tr.t1, 33, 10, 1),
+                       color: "#8fbc8f",
+                       errors: errorbars(33, 0.5),
+                       error_color: "#ccdd88",
+                       size: 4}],
+                 div: "plot" + tr.id,
+                 size: [w * 2.5, h / 2],
+                 padding_right: 50,
+                 xlabel: "time, " + ["small", "medium", "large"][tr.id - tranges[0].id] + " range",
+                 ylabel: "Events"
+               });
+  });
+
+};
+
+if(typeof define=="function" && define.amd)
+  define(["underscore", "d3", "i3d3"], i3d3_demo);
+else
+  i3d3_demo(_, d3, i3d3);

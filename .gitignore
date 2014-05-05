@@ -34,3 +34,4 @@ nosetests.xml
 .project
 .pydevproject
 bower_components/
+node_modules
