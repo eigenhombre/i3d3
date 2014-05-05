@@ -1,6 +1,6 @@
 {
   "name": "i3d3",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "D3-based plotting and histogramming library",
   "main": "i3d3.js",
   "scripts": {
