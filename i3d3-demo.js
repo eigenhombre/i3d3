@@ -1,4 +1,4 @@
-define(["underscore", "d3", "i3d3"], function(_, d3, i3d3){
+var i3d3_demo = function(_, d3, i3d3){
 
   var h = 250,
       w = 280;
@@ -272,4 +272,9 @@ define(["underscore", "d3", "i3d3"], function(_, d3, i3d3){
                });
   });
 
-});
+};
+
+if(typeof define=="function" && define.amd)
+  define(["underscore", "d3", "i3d3"], i3d3_demo);
+else
+  i3d3_demo(_, d3, i3d3);
